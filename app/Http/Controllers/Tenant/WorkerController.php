@@ -1,0 +1,118 @@
+<?php
+
+namespace App\Http\Controllers\Tenant;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Tenant\WorkerRequest;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
+
+class WorkerController extends Controller
+{
+    /**
+     * Display a listing of workers.
+     */
+    public function index(): View
+    {
+        $workers = User::workers()
+            ->with('profile')
+            ->latest()
+            ->paginate(15);
+
+        return view('tenant.workers.index', compact('workers'));
+    }
+
+    /**
+     * Show the form for creating a new worker.
+     */
+    public function create(): View
+    {
+        return view('tenant.workers.create');
+    }
+
+    /**
+     * Store a newly created worker in storage.
+     */
+    public function store(WorkerRequest $request): RedirectResponse
+    {
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
+            ]);
+
+            $user->profile()->create($request->only([
+                'employee_id', 'department', 'skills', 'employment_type', 
+                'phone_number', 'joined_at', 'hourly_rate'
+            ]));
+        });
+
+        return redirect()->route('tenant.workers.index')
+            ->with('success', 'Worker created successfully.');
+    }
+
+    /**
+     * Display the specified worker.
+     */
+    public function show(User $worker): View
+    {
+        $worker->load('profile');
+        return view('tenant.workers.show', compact('worker'));
+    }
+
+    /**
+     * Show the form for editing the specified worker.
+     */
+    public function edit(User $worker): View
+    {
+        $worker->load('profile');
+        return view('tenant.workers.edit', compact('worker'));
+    }
+
+    /**
+     * Update the specified worker in storage.
+     */
+    public function update(WorkerRequest $request, User $worker): RedirectResponse
+    {
+        DB::transaction(function () use ($request, $worker) {
+            $userData = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'role' => $request->role,
+            ];
+
+            if ($request->filled('password')) {
+                $userData['password'] = Hash::make($request->password);
+            }
+
+            $worker->update($userData);
+
+            $worker->profile()->updateOrCreate(
+                ['user_id' => $worker->id],
+                $request->only([
+                    'employee_id', 'department', 'skills', 'employment_type', 
+                    'phone_number', 'joined_at', 'hourly_rate'
+                ])
+            );
+        });
+
+        return redirect()->route('tenant.workers.index')
+            ->with('success', 'Worker updated successfully.');
+    }
+
+    /**
+     * Remove the specified worker from storage.
+     */
+    public function destroy(User $worker): RedirectResponse
+    {
+        $worker->delete();
+
+        return redirect()->route('tenant.workers.index')
+            ->with('success', 'Worker deleted successfully.');
+    }
+}

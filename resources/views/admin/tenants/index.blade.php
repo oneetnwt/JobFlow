@@ -1,0 +1,69 @@
+<x-layouts.admin>
+    <x-slot name="header">Tenant Management</x-slot>
+
+    <div class="space-y-6">
+        @if(session('success'))
+            <div class="bg-emerald-50 text-emerald-800 border-l-4 border-emerald-500 p-4 text-sm font-bold rounded shadow-sm">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50/50">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Organization Details</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subdomain</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">Operations</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @foreach($tenants as $tenant)
+                        <tr class="hover:bg-slate-50/80 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-bold text-[#0F172A]">{{ $tenant->company_name }}</div>
+                                <div class="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-0.5">UID: {{ $tenant->id }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-xs font-bold text-[#2D7DD2]">{{ $tenant->id }}.localhost:8000</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2.5 py-1 text-[10px] font-black rounded uppercase tracking-tighter
+                                    {{ $tenant->status === 'active' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : '' }}
+                                    {{ $tenant->status === 'pending' ? 'bg-amber-50 text-amber-600 border border-amber-100' : '' }}
+                                    {{ $tenant->status === 'suspended' ? 'bg-rose-50 text-rose-600 border border-rose-100' : '' }}
+                                ">
+                                    ● {{ $tenant->status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right space-x-2 flex items-center justify-end">
+                                <a href="{{ route('admin.tenants.show', $tenant) }}" class="text-[10px] font-bold text-[#2D7DD2] uppercase hover:underline mr-4">View Profile</a>
+                                
+                                @if($tenant->status !== 'active')
+                                    <form action="{{ route('admin.tenants.approve', $tenant) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-[10px] font-bold bg-[#0F172A] text-white px-3 py-1.5 rounded hover:bg-slate-800 transition-all uppercase tracking-widest shadow-sm">Approve</button>
+                                    </form>
+                                @endif
+
+                                @if($tenant->status === 'active')
+                                    <form action="{{ route('admin.tenants.suspend', $tenant) }}" method="POST" class="inline" onsubmit="return confirm('Suspend this workspace?')">
+                                        @csrf
+                                        <button type="submit" class="text-[10px] font-bold border border-rose-200 text-rose-600 px-3 py-1.5 rounded hover:bg-rose-50 transition-all uppercase tracking-widest">Suspend</button>
+                                    </form>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            
+            @if($tenants->hasPages())
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+                    {{ $tenants->links() }}
+                </div>
+            @endif
+        </div>
+    </div>
+</x-layouts.admin>
