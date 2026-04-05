@@ -1,11 +1,5 @@
 # JobFlow OMS
 
-<p align="center">
-	<img src="docs/jobflow-banner.svg" alt="JobFlow OMS banner" width="980">
-</p>
-
-Enterprise Job Order Management System
-
 ![Laravel 13](https://img.shields.io/badge/Laravel-13.x-FF2D20)
 ![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-777BB4)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green)
