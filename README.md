@@ -1,58 +1,543 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# JobFlow OMS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```text
+		 _       _     ______ _                 ____  __  __  _____
+		| | ___ | |__ |  ____| | _____      __ / __ \|  \/  |/ ____|
+ _  | |/ _ \| '_ \| |__  | |/ _ \ \ /\ / /| |  | | \  / | (___
+| |_| | (_) | |_) |  __| | | (_) \ V  V / | |  | | |\/| |\___ \
+ \___/ \___/|_.__/|_|    |_|\___/ \_/\_/  | |__| | |  | |____) |
+																					\____/|_|  |_|_____/
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Enterprise Job Order Management System
 
-## Contributing
+![Laravel 13](https://img.shields.io/badge/Laravel-13.x-FF2D20)
+![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-777BB4)
+![License: MIT](https://img.shields.io/badge/License-MIT-green)
+![Build](https://img.shields.io/badge/Build-No%20CI%20Configured-lightgrey)
+![Last Commit](https://img.shields.io/github/last-commit/oneetnwt/JobFlow)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 2. Table of Contents
+1. [Project Banner](#jobflow-oms)
+2. [Table of Contents](#2-table-of-contents)
+3. [Overview](#3-overview)
+4. [Features](#4-features)
+5. [Tech Stack](#5-tech-stack)
+6. [Architecture Overview](#6-architecture-overview)
+7. [Prerequisites](#7-prerequisites)
+8. [Installation](#8-installation)
+9. [Environment Variables](#9-environment-variables)
+10. [Subdomain Setup (Local Development)](#10-subdomain-setup-local-development)
+11. [Database Seeding](#11-database-seeding)
+12. [Pricing Plans](#12-pricing-plans)
+13. [Folder Structure](#13-folder-structure)
+14. [Key Routes](#14-key-routes)
+15. [Contributing](#15-contributing)
+16. [License](#16-license)
+17. [Contact and Support](#17-contact-and-support)
 
-## Code of Conduct
+## 3. Overview
+JobFlow OMS is a Laravel-based operations platform for managing job orders, workforce assignments, and payroll workflows across multiple organizations. The system centralizes operational records that are commonly fragmented across spreadsheets and disconnected tools. It provides a single operational model for creating jobs, assigning workers, tracking progress, and generating payroll artifacts.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The application implements domain-based multitenancy using `stancl/tenancy`. A central application context handles public registration, pricing, and super-administrator governance, while each tenant workspace is resolved by domain and bootstrapped into an isolated tenant database. Tenant initialization and protection are enforced through tenancy middleware and a tenant-status gate.
 
-## Security Vulnerabilities
+Core capabilities include job order lifecycle management, task decomposition and completion tracking, role-gated worker management, payroll period generation and release, and centralized platform activity logging. Tenant onboarding is coupled with subscription plan selection, including auto-approval behavior for specific plans.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+The target users are operational and administrative teams that manage field or service workflows: operations managers, logistics coordinators, dispatch teams, and tenant administrators responsible for workforce and payroll execution.
 
-## License
+## 4. Features
+### Multitenancy and Subdomain Routing
+- Domain-resolved tenant context using `InitializeTenancyByDomain`.
+- Central-domain protection using `PreventAccessFromCentralDomains`.
+- Per-tenant database provisioning via tenancy event pipeline (`CreateDatabase`, `MigrateDatabase`).
+- Tenant database naming convention: `jobflow_<tenant_id>`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Authentication and Role-Based Access Control
+- Central guard: `auth:central` for super admin access.
+- Tenant guard: session-based `auth` for tenant users.
+- Role gates in `AppServiceProvider`: `manage-payroll`, `manage-workers`, `manage-jobs`.
+- Worker roles in tenant DB: `admin`, `manager`, `worker`.
+
+### Tenant Registration and Approval Workflow
+- Public registration flow with validation and plan selection.
+- Automatic tenant domain creation based on selected subdomain.
+- Tenant admin bootstrap account creation inside tenant database.
+- Status workflow: `pending`, `active`, `suspended`.
+- Optional auto-approval based on selected plan (`auto_approve`).
+
+### Pricing Plans and Subscription Management
+- Centralized pricing plan CRUD in super admin portal.
+- Plan metadata: monthly/annual pricing, worker/job limits, feature flags, order, status.
+- Soft-archive strategy for plans used by active tenants.
+- Public pricing page backed by active plan records.
+
+### Super Admin Dashboard
+- Platform KPIs: total, pending, active, and suspended tenant counts.
+- Tenant management actions: approve, suspend, branding update, impersonate.
+- Activity log review with pagination.
+
+### Tenant Admin Dashboard
+- Tenant operational metrics (active jobs, workers, completed jobs, pending payroll sum).
+- Recent job summary with creator and assignee context.
+
+### Job Order Management
+- Full CRUD for job orders.
+- Status model: `draft`, `open`, `assigned`, `in_progress`, `completed`, `cancelled`.
+- Priority model: `low`, `medium`, `high`, `urgent`.
+- Assignment-driven and completion-driven state transitions.
+
+### Worker Assignment and Scheduling
+- Worker and manager account creation with profile records.
+- Extended worker profile attributes: employee ID, department, employment type, hourly rate, skills.
+- Role-gated worker module access (`manage-workers`).
+
+### Real-Time Job Tracking
+- Task-level tracking under each job order.
+- Task status toggle and completion timestamping.
+- Computed progress percentage on job orders.
+- Automatic job completion when all tasks are completed.
+
+### Payroll Processing
+- Payroll period lifecycle: create, generate, release.
+- Payroll slip generation for workers using stored profile rate.
+- Payroll status handling: period (`draft`, `processed`, `released`), slip (`pending`, `paid`).
+- Role-gated payroll module access (`manage-payroll`).
+
+### Activity Logging and Audit Trail
+- Central activity log model with event, description, metadata, and source IP.
+- Logged events for tenant registration, approval, suspension, branding updates, and impersonation.
+- Super admin log viewer with pagination.
+
+### Platform Settings
+- Tenant branding fields (`brand_color`, `logo_url`).
+- Tenant status enforcement via `TenantActiveMiddleware`.
+- Central domain configuration through `config/tenancy.php`.
+
+## 5. Tech Stack
+| Layer | Technology | Version |
+|---|---|---|
+| Backend | Laravel Framework | `^13.0` |
+| Language | PHP | `^8.3` |
+| Multitenancy | stancl/tenancy | `^3.10` |
+| Database | MySQL (default), SQLite, MariaDB, PostgreSQL, SQL Server | Configured in `config/database.php` |
+| Frontend Rendering | Blade Templates | Laravel 13 component/view system |
+| JavaScript Bundler | Vite | `^8.0.0` |
+| CSS Framework | Tailwind CSS | `^4.0.0` |
+| HTTP Client (Frontend) | Axios | `>=1.11.0 <=1.14.0` |
+| Authentication | Laravel Session Guards (`web`, `central`) | Laravel 13 Auth |
+| Queue | Laravel Queue (database driver default) | Laravel 13 Queue |
+| Cache | Laravel Cache (database store default) | Laravel 13 Cache |
+| Storage | Local filesystem (default), optional S3 | Laravel Filesystem |
+| Testing | Pest + PHPUnit | `^4.4` / XML schema in `phpunit.xml` |
+
+## 6. Architecture Overview
+### Multitenant Subdomain Model
+The platform separates central and tenant concerns by domain:
+- `admin.jobflow.com` (production pattern): super admin portal.
+- `{slug}.jobflow.com` (production pattern): tenant workspace domains.
+
+In local configuration, central domains are currently:
+- `localhost`
+- `admin.localhost`
+- `127.0.0.1`
+
+Tenant resolution occurs at request time through tenancy middleware. Once a tenant is resolved, tenancy bootstrappers switch database/cache/filesystem/queue context so requests operate on tenant-scoped resources. Data isolation is implemented at the database level, with one tenant database per workspace.
+
+### Role Structure
+- Super Admin:
+	- Authenticates using the `central` guard.
+	- Manages tenants, pricing plans, approvals/suspensions, branding updates, impersonation, and platform logs.
+- Tenant Admin:
+	- Exists inside tenant database.
+	- Can manage payroll and workers (through gate policies), plus full job operations.
+- Worker/Staff (`worker`, `manager`):
+	- `manager` can access worker management and job management gates.
+	- `worker` participates in operational workflows without elevated administration permissions.
+
+### Database Architecture
+Central database stores platform metadata and governance data (`tenants`, `domains`, `plans`, `activity_logs`, central `users`). Each tenant has an isolated database containing operational tables (`users`, `job_orders`, `tasks`, `worker_profiles`, `payroll_periods`, `payrolls`).
+
+Key relationships:
+- Central:
+	- `tenants.plan_id -> plans.id`
+	- `domains.tenant_id -> tenants.id`
+	- `activity_logs.user_id -> users.id`
+	- `activity_logs.tenant_id -> tenants.id`
+- Tenant:
+	- `job_orders.created_by -> users.id`
+	- `job_orders.assigned_to -> users.id`
+	- `worker_profiles.user_id -> users.id`
+	- `tasks.job_order_id -> job_orders.id`
+	- `payrolls.payroll_period_id -> payroll_periods.id`
+	- `payrolls.user_id -> users.id`
+
+## 7. Prerequisites
+- PHP: `8.3+` (project constraint is `^8.3`; local runtime observed: `8.5.1`).
+- Composer: `2.x` (local observed: `2.9.5`).
+- Node.js: modern LTS/current (local observed: `v22.21.0`).
+- npm: modern version (local observed: `11.6.2`).
+- Database engine: MySQL recommended for parity with `.env.example` defaults (`DB_CONNECTION=mysql`).
+- Required PHP extensions (from `composer check-platform-reqs --no-dev`):
+	- `ext-dom`
+	- `ext-fileinfo`
+	- `ext-filter`
+	- `ext-hash`
+	- `ext-iconv`
+	- `ext-json`
+	- `ext-libxml`
+	- `ext-openssl`
+	- `ext-pcre`
+	- `ext-session`
+	- `ext-tokenizer`
+	- `ext-ctype` (polyfill-capable)
+	- `ext-mbstring` (polyfill-capable)
+
+## 8. Installation
+```bash
+# 1. Clone the repository
+git clone https://github.com/oneetnwt/JobFlow.git
+cd JobFlow
+```
+
+```bash
+# 2. Install PHP dependencies
+composer install
+```
+
+```bash
+# 3. Install Node dependencies
+npm install
+```
+
+```bash
+# 4. Copy environment file
+cp .env.example .env
+```
+
+```bash
+# 5. Generate application key
+php artisan key:generate
+```
+
+```bash
+# 6. Configure your .env file
+# - Set APP_URL
+# - Set DB_* credentials for central database
+# - Set mail settings if not using log mailer
+```
+
+```bash
+# 7. Run central database migrations
+php artisan migrate
+```
+
+```bash
+# 8. Run database seeders
+php artisan db:seed
+```
+
+```bash
+# 9. Build frontend assets
+npm run dev
+# or for production:
+npm run build
+```
+
+```bash
+# 10. Start the development server
+php artisan serve
+```
+
+## 9. Environment Variables
+| Variable | Description | Example Value | Required |
+|---|---|---|---|
+| `APP_NAME` | Application display name | `JobFlow OMS` | Yes |
+| `APP_ENV` | Runtime environment | `local` | Yes |
+| `APP_KEY` | Application encryption key | `base64:...` | Yes |
+| `APP_DEBUG` | Debug mode toggle | `true` | Yes |
+| `APP_URL` | Base application URL | `http://localhost` | Yes |
+| `APP_LOCALE` | Default locale | `en` | Yes |
+| `APP_FALLBACK_LOCALE` | Fallback locale | `en` | Yes |
+| `APP_FAKER_LOCALE` | Faker locale | `en_US` | Yes |
+| `APP_MAINTENANCE_DRIVER` | Maintenance mode driver | `file` | Yes |
+| `APP_MAINTENANCE_STORE` | Maintenance cache store | `database` | No |
+| `PHP_CLI_SERVER_WORKERS` | PHP built-in server workers | `4` | No |
+| `BCRYPT_ROUNDS` | Password hashing cost | `12` | Yes |
+| `LOG_CHANNEL` | Default log channel | `stack` | Yes |
+| `LOG_STACK` | Channels used by stack driver | `single` | Yes |
+| `LOG_DEPRECATIONS_CHANNEL` | Deprecation log channel | `null` | Yes |
+| `LOG_LEVEL` | Logging threshold | `debug` | Yes |
+| `DB_CONNECTION` | Database connection driver | `mysql` | Yes |
+| `DB_HOST` | Database host | `127.0.0.1` | Yes |
+| `DB_PORT` | Database port | `3306` | Yes |
+| `DB_DATABASE` | Central database name | `jobflow` | Yes |
+| `DB_USERNAME` | Database username | `root` | Yes |
+| `DB_PASSWORD` | Database password | `` | Yes |
+| `SESSION_DRIVER` | Session backend driver | `database` | Yes |
+| `SESSION_LIFETIME` | Session lifetime (minutes) | `120` | Yes |
+| `SESSION_ENCRYPT` | Encrypt session payloads | `false` | Yes |
+| `SESSION_PATH` | Session cookie path | `/` | Yes |
+| `SESSION_DOMAIN` | Session cookie domain | `null` | Yes |
+| `BROADCAST_CONNECTION` | Broadcast driver | `log` | Yes |
+| `FILESYSTEM_DISK` | Default filesystem disk | `local` | Yes |
+| `QUEUE_CONNECTION` | Queue connection driver | `database` | Yes |
+| `CACHE_STORE` | Default cache store | `database` | Yes |
+| `CACHE_PREFIX` | Cache key prefix | `jobflow-cache-` | No |
+| `MEMCACHED_HOST` | Memcached host | `127.0.0.1` | No |
+| `REDIS_CLIENT` | Redis client | `phpredis` | No |
+| `REDIS_HOST` | Redis host | `127.0.0.1` | No |
+| `REDIS_PASSWORD` | Redis password | `null` | No |
+| `REDIS_PORT` | Redis port | `6379` | No |
+| `MAIL_MAILER` | Mail transport | `log` | Yes |
+| `MAIL_SCHEME` | SMTP scheme | `null` | No |
+| `MAIL_HOST` | Mail host | `127.0.0.1` | Yes |
+| `MAIL_PORT` | Mail port | `2525` | Yes |
+| `MAIL_USERNAME` | Mail username | `null` | No |
+| `MAIL_PASSWORD` | Mail password | `null` | No |
+| `MAIL_FROM_ADDRESS` | Sender address | `hello@example.com` | Yes |
+| `MAIL_FROM_NAME` | Sender name | `${APP_NAME}` | Yes |
+| `AWS_ACCESS_KEY_ID` | AWS access key | `` | No |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key | `` | No |
+| `AWS_DEFAULT_REGION` | AWS region | `us-east-1` | No |
+| `AWS_BUCKET` | S3 bucket name | `` | No |
+| `AWS_USE_PATH_STYLE_ENDPOINT` | S3 path-style endpoint flag | `false` | No |
+| `VITE_APP_NAME` | Frontend-exposed app name | `${APP_NAME}` | Yes |
+
+## 10. Subdomain Setup (Local Development)
+### Using /etc/hosts (or Windows hosts file)
+```bash
+# Add entries to your hosts file
+127.0.0.1   jobflow.test
+127.0.0.1   admin.jobflow.test
+127.0.0.1   demo.jobflow.test
+127.0.0.1   acme.jobflow.test
+```
+
+For this codebase, update `config/tenancy.php` `central_domains` to match local central hostnames (for example `jobflow.test` and `admin.jobflow.test`), then clear cached config.
+
+```bash
+php artisan config:clear
+```
+
+### Using Laravel Valet (macOS)
+```bash
+valet link jobflow
+valet secure jobflow
+# Access at: https://jobflow.test
+```
+
+### Using Laragon (Windows)
+1. Place the project under Laragon web root (or create a custom host).
+2. Create virtual hosts for central and admin domains, for example:
+
+```apache
+<VirtualHost *:80>
+		ServerName jobflow.test
+		DocumentRoot "C:/laragon/www/jobflow-oms/public"
+</VirtualHost>
+
+<VirtualHost *:80>
+		ServerName admin.jobflow.test
+		DocumentRoot "C:/laragon/www/jobflow-oms/public"
+</VirtualHost>
+
+<VirtualHost *:80>
+		ServerName demo.jobflow.test
+		DocumentRoot "C:/laragon/www/jobflow-oms/public"
+</VirtualHost>
+```
+
+3. Add matching host entries in `C:\Windows\System32\drivers\etc\hosts`.
+4. Ensure `config/tenancy.php` includes your central domains only (not tenant domains).
+
+### APP_URL Configuration
+Use a central-domain URL and a parent-cookie strategy for subdomain auth behavior:
+
+```bash
+APP_URL=http://jobflow.test
+SESSION_DOMAIN=.jobflow.test
+```
+
+Example `config/tenancy.php` central domains for local subdomain routing:
+
+```php
+'central_domains' => [
+		'jobflow.test',
+		'admin.jobflow.test',
+],
+```
+
+## 11. Database Seeding
+```bash
+# Run all seeders
+php artisan db:seed
+```
+
+```bash
+# Run a specific seeder
+php artisan db:seed --class=PlanSeeder
+php artisan db:seed --class=SuperAdminSeeder
+```
+
+**Seeded Data:**
+
+| Seeder | What It Creates |
+|---|---|
+| `PlanSeeder` | 4 pricing plans (`Free`, `Starter`, `Professional`, `Enterprise`) with limits, pricing, feature arrays, and plan flags |
+| `SuperAdminSeeder` | Default super admin user in central `users` table |
+| `DatabaseSeeder` | Calls `PlanSeeder` + `SuperAdminSeeder`, and creates `test@example.com` sample user |
+
+**Default Super Admin Credentials:**
+
+Email: `admin@jobflow.com`  
+Password: `password`
+
+Note: Change default credentials immediately in production.
+
+## 12. Pricing Plans
+| Plan | Monthly Price | Annual Price | Workers | Job Orders | Payroll | Auto-Approve |
+|---|---:|---:|---|---|---|---|
+| Free | ₱0 | ₱0 | 3 | 20/month | No | Yes |
+| Starter | ₱999 | ₱9,990 | 10 | 150/month | No | No |
+| Professional | ₱2,499 | ₱24,990 | 50 | Unlimited | Yes | No |
+| Enterprise | Custom | Custom | Unlimited | Unlimited | Yes | No |
+
+## 13. Folder Structure
+```text
+jobflow-oms/
+├── app/                            # Core application code
+│   ├── Http/                       # Controllers, middleware, and request validation
+│   │   ├── Controllers/            # Central and tenant HTTP controllers
+│   │   │   ├── Central/            # Public/central and admin domain controllers
+│   │   │   │   └── Admin/          # Super admin feature controllers
+│   │   │   └── Tenant/             # Tenant workspace controllers
+│   │   ├── Middleware/             # Tenant-active and super-admin access middleware
+│   │   └── Requests/               # Form request validation for central/tenant workflows
+│   ├── Models/                     # Eloquent models for central and tenant entities
+│   ├── Notifications/              # Notification classes (tenant approval mail)
+│   ├── Providers/                  # Service providers (gates, tenancy bootstrapping)
+│   └── Services/                   # Domain services for onboarding, activity logs, payroll
+├── bootstrap/                      # Application bootstrap and provider registration
+├── config/                         # Laravel and tenancy configuration files
+├── database/                       # Migrations, factories, and seeders
+│   ├── factories/                  # Model factories for tests/dev data
+│   ├── migrations/                 # Central database migrations
+│   │   └── tenant/                 # Tenant database migrations
+│   └── seeders/                    # Seeders for plans, super admin, and base data
+├── public/                         # Web root and built frontend assets
+├── resources/                      # Frontend source files
+│   ├── css/                        # Tailwind CSS entrypoint and design tokens
+│   ├── js/                         # JavaScript entrypoints and Axios bootstrap
+│   └── views/                      # Blade templates and layout components
+├── routes/                         # Route definitions for central, tenant, and console
+├── storage/                        # Logs, framework cache, and generated files
+├── tests/                          # Pest feature/unit test suites
+├── composer.json                   # PHP dependencies and Composer scripts
+├── package.json                    # Node dependencies and Vite scripts
+├── phpunit.xml                     # Test runner configuration
+└── vite.config.js                  # Vite + Laravel plugin configuration
+```
+
+## 14. Key Routes
+### Public Routes (central domains)
+| Method | URI | Route Name | Description |
+|---|---|---|---|
+| GET | `/` | `home` | Public landing page |
+| GET | `/pricing` | `pricing` | Public pricing page |
+| GET | `/register` | `tenant.register.create` | Tenant registration form |
+| POST | `/register` | `tenant.register.store` | Submit tenant registration |
+
+### Super Admin Routes (`admin.<central-domain>`)
+| Method | URI | Route Name | Description |
+|---|---|---|---|
+| GET | `/login` | `login`, `admin.login` | Super admin login form |
+| POST | `/login` | `admin.login.store` | Super admin login submit |
+| POST | `/logout` | `admin.logout` | Super admin logout |
+| GET | `/` | `admin.dashboard` | Super admin dashboard |
+| GET | `/tenants` | `admin.tenants.index` | Tenant list |
+| GET | `/tenants/{tenant}` | `admin.tenants.show` | Tenant details and metrics |
+| PUT | `/tenants/{tenant}` | `admin.tenants.update` | Update tenant branding metadata |
+| POST | `/tenants/{tenant}/approve` | `admin.tenants.approve` | Approve pending tenant |
+| POST | `/tenants/{tenant}/suspend` | `admin.tenants.suspend` | Suspend tenant workspace |
+| GET | `/tenants/{tenant}/impersonate` | `admin.tenants.impersonate` | Impersonate tenant admin session |
+| GET | `/logs` | `admin.logs.index` | Platform activity logs |
+| GET | `/plans` | `admin.plans.index` | Pricing plans index |
+| POST | `/plans` | `admin.plans.store` | Create pricing plan |
+| GET | `/plans/create` | `admin.plans.create` | Create plan form |
+| GET | `/plans/{plan}/edit` | `admin.plans.edit` | Edit plan form |
+| PUT/PATCH | `/plans/{plan}` | `admin.plans.update` | Update pricing plan |
+| DELETE | `/plans/{plan}` | `admin.plans.destroy` | Archive/delete pricing plan |
+
+### Tenant Routes (`{slug}.<central-root-domain>`)
+| Method | URI | Route Name | Description |
+|---|---|---|---|
+| GET | `/login` | `tenant.login` | Tenant user login form |
+| POST | `/login` | `tenant.login.store` | Tenant login submit |
+| POST | `/logout` | `tenant.logout` | Tenant logout |
+| GET | `/` | — | Redirect to tenant dashboard |
+| GET | `/dashboard` | `tenant.dashboard` | Tenant dashboard |
+| GET | `/jobs` | `tenant.jobs.index` | Job orders list |
+| POST | `/jobs` | `tenant.jobs.store` | Create job order |
+| GET | `/jobs/create` | `tenant.jobs.create` | Job order create form |
+| GET | `/jobs/{job}` | `tenant.jobs.show` | Job order details |
+| GET | `/jobs/{job}/edit` | `tenant.jobs.edit` | Job order edit form |
+| PUT/PATCH | `/jobs/{job}` | `tenant.jobs.update` | Update job order |
+| DELETE | `/jobs/{job}` | `tenant.jobs.destroy` | Delete job order |
+| POST | `/jobs/{job}/tasks` | `tenant.tasks.store` | Create task under job |
+| POST | `/tasks/{task}/toggle` | `tenant.tasks.toggle` | Toggle task completion |
+| DELETE | `/tasks/{task}` | `tenant.tasks.destroy` | Delete task |
+| GET | `/workers` | `tenant.workers.index` | Workers list (gated) |
+| POST | `/workers` | `tenant.workers.store` | Create worker (gated) |
+| GET | `/workers/create` | `tenant.workers.create` | Worker create form (gated) |
+| GET | `/workers/{worker}` | `tenant.workers.show` | Worker details (gated) |
+| GET | `/workers/{worker}/edit` | `tenant.workers.edit` | Worker edit form (gated) |
+| PUT/PATCH | `/workers/{worker}` | `tenant.workers.update` | Update worker (gated) |
+| DELETE | `/workers/{worker}` | `tenant.workers.destroy` | Delete worker (gated) |
+| GET | `/payroll` | `tenant.payroll.index` | Payroll period list (gated) |
+| GET | `/payroll/create` | `tenant.payroll.create` | Create payroll period form (gated) |
+| POST | `/payroll` | `tenant.payroll.store` | Store payroll period (gated) |
+| GET | `/payroll/{period}` | `tenant.payroll.show` | Payroll period detail (gated) |
+| POST | `/payroll/{period}/generate` | `tenant.payroll.generate` | Generate payroll slips (gated) |
+| POST | `/payroll/{period}/release` | `tenant.payroll.release` | Release payroll period (gated) |
+
+## 15. Contributing
+1. Fork the repository.
+2. Create a feature branch:
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+3. Commit using conventional commit prefixes: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`.
+4. Push your branch and open a pull request against `main`.
+5. Ensure each pull request receives at least one review before merge.
+6. Include relevant tests for all new features and behavior changes.
+
+## 16. License
+MIT License
+
+Copyright (c) 2026 JobFlow OMS Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## 17. Contact and Support
+- Maintainer: Repository Owner
+- Email: admin@jobflow.com
+- Issue Tracker: [GitHub Issues](https://github.com/oneetnwt/JobFlow/issues)
+- Documentation: [Project README](https://github.com/oneetnwt/JobFlow#readme)

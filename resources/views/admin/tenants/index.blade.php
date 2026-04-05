@@ -20,13 +20,27 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @foreach($tenants as $tenant)
+                        @php
+                            $baseDomain = preg_replace('/:\\d+$/', '', (string) (config('tenancy.central_domains')[0] ?? 'localhost'));
+                            $displayHost = $tenant->domains()->value('domain')
+                                ?? (($tenant->subdomain ?: $tenant->id) . '.' . $baseDomain);
+                            $port = request()->getPort();
+                            $portSegment = in_array((int) $port, [80, 443], true) ? '' : ':' . $port;
+                        @endphp
                         <tr class="hover:bg-slate-50/80 transition-colors">
                             <td class="px-6 py-4">
                                 <div class="text-sm font-bold text-[#0F172A]">{{ $tenant->company_name }}</div>
                                 <div class="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-0.5">UID: {{ $tenant->id }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="text-xs font-bold text-[#2D7DD2]">{{ $tenant->id }}.localhost:8000</span>
+                                <a
+                                    href="{{ (request()->secure() ? 'https://' : 'http://') . $displayHost . $portSegment }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-xs font-bold text-[#2D7DD2] hover:underline"
+                                >
+                                    {{ $displayHost }}{{ $portSegment }}
+                                </a>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 text-[10px] font-black rounded uppercase tracking-tighter

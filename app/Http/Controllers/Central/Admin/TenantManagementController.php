@@ -110,8 +110,14 @@ class TenantManagementController extends Controller
 
         // Generate token and redirect to tenant dashboard
         // Note: The token is valid for a short period
-        $token = tenancy()->impersonate($tenant, $adminUser->id, route('tenant.dashboard'), 'web');
+        $token = tenancy()->impersonate($tenant, (string) $adminUser->id, '/dashboard', 'web');
 
-        return redirect($token->getTargetUrl());
+        $scheme = request()->secure() ? 'https://' : 'http://';
+        $baseDomain = preg_replace('/:\\d+$/', '', (string) (config('tenancy.central_domains')[0] ?? 'localhost'));
+        $subdomain = $tenant->subdomain ?: $tenant->getTenantKey();
+        $port = request()->getPort();
+        $portSegment = in_array((int) $port, [80, 443], true) ? '' : ':' . $port;
+
+        return redirect()->away($scheme . $subdomain . '.' . $baseDomain . $portSegment . '/impersonate/' . $token->token);
     }
 }

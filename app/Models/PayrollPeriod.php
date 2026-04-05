@@ -7,7 +7,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'start_date', 'end_date', 'status', 'total_amount'])]
+#[Fillable([
+    'name',
+    'start_date',
+    'end_date',
+    'period_start',
+    'period_end',
+    'period_type',
+    'status',
+    'processed_at',
+    'total_amount',
+])]
 class PayrollPeriod extends Model
 {
     use HasFactory;
@@ -17,6 +27,9 @@ class PayrollPeriod extends Model
         return [
             'start_date' => 'date',
             'end_date' => 'date',
+            'period_start' => 'date',
+            'period_end' => 'date',
+            'processed_at' => 'datetime',
             'total_amount' => 'decimal:2',
         ];
     }

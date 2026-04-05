@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\WorkerRequest;
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -50,6 +51,16 @@ class WorkerController extends Controller
                 'employee_id', 'department', 'skills', 'employment_type', 
                 'phone_number', 'joined_at', 'hourly_rate'
             ]));
+
+            Employee::create([
+                'employee_code' => $request->employee_id ?: ('EMP-' . $user->id),
+                'full_name' => $request->name,
+                'position' => $request->department,
+                'employment_type' => $request->employment_type,
+                'daily_rate' => $request->daily_rate,
+                'hourly_rate' => $request->hourly_rate,
+                'status' => 'active',
+            ]);
         });
 
         return redirect()->route('tenant.workers.index')
@@ -98,6 +109,19 @@ class WorkerController extends Controller
                     'employee_id', 'department', 'skills', 'employment_type', 
                     'phone_number', 'joined_at', 'hourly_rate'
                 ])
+            );
+
+            $employeeCode = $request->employee_id ?: ('EMP-' . $worker->id);
+            Employee::updateOrCreate(
+                ['employee_code' => $employeeCode],
+                [
+                    'full_name' => $request->name,
+                    'position' => $request->department,
+                    'employment_type' => $request->employment_type,
+                    'daily_rate' => $request->daily_rate,
+                    'hourly_rate' => $request->hourly_rate,
+                    'status' => 'active',
+                ]
             );
         });
 

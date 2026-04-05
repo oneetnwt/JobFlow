@@ -16,15 +16,15 @@ foreach (config('tenancy.central_domains') as $domain) {
         if (str_starts_with($domain, 'admin.')) {
             
             // Define plain 'login' route for Laravel's auth middleware to redirect to
-            Route::get('/login', [AdminAuthController::class, 'create'])->name('login')->middleware('guest');
+            Route::get('/login', [AdminAuthController::class, 'create'])->name('login')->middleware('guest:central');
 
             Route::name('admin.')->group(function () {
-                Route::middleware('guest')->group(function () {
+                Route::middleware('guest:central')->group(function () {
                     Route::get('/login', [AdminAuthController::class, 'create'])->name('login');
                     Route::post('/login', [AdminAuthController::class, 'store'])->name('login.store');
                 });
 
-                Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsSuperAdmin::class])->group(function () {
+                Route::middleware(['auth:central', \App\Http\Middleware\EnsureUserIsSuperAdmin::class])->group(function () {
                     Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
                     // Dashboard is now mapped to the root "/"
                     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');

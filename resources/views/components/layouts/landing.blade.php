@@ -1,3 +1,5 @@
+@props(['showTopbar' => true])
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-white antialiased scroll-smooth">
 <head>
@@ -23,25 +25,27 @@
 </head>
 <body class="h-full font-sans text-[#0F172A] bg-white selection:bg-[#2D7DD2] selection:text-white">
 
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center">
-                    <span class="text-xl font-extrabold tracking-tighter text-[#0F172A]">
-                        JobFlow <span class="text-[#2D7DD2]">OMS</span>
-                    </span>
-                </div>
-                <div class="hidden md:flex space-x-8 items-center text-sm font-semibold text-slate-600">
-                    <a href="{{ request()->routeIs('home') ? '#features' : route('home').'#features' }}" class="hover:text-[#0F172A] transition-colors">Features</a>
-                    <a href="{{ route('pricing') }}" class="hover:text-[#0F172A] transition-colors">Pricing</a>
-                    <a href="{{ route('tenant.register.create') }}" class="px-4 py-2 bg-[#0F172A] text-white rounded-md hover:bg-slate-800 transition-all shadow-sm">
-                        Get Started
-                    </a>
+    @if($showTopbar)
+        <!-- Navigation -->
+        <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center">
+                        <span class="text-xl font-extrabold tracking-tighter text-[#0F172A]">
+                            JobFlow <span class="text-[#2D7DD2]">OMS</span>
+                        </span>
+                    </div>
+                    <div class="hidden md:flex space-x-8 items-center text-sm font-semibold text-slate-600">
+                        <a href="{{ request()->routeIs('home') ? '#features' : route('home').'#features' }}" class="hover:text-[#0F172A] transition-colors">Features</a>
+                        <a href="{{ route('pricing') }}" class="hover:text-[#0F172A] transition-colors">Pricing</a>
+                        <a href="{{ route('tenant.register.create') }}" class="px-4 py-2 bg-[#0F172A] text-white rounded-md hover:bg-slate-800 transition-all shadow-sm">
+                            Get Started
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    @endif
 
     <main>
         {{ $slot }}

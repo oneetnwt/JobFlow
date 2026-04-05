@@ -27,6 +27,7 @@ class WorkerRequest extends FormRequest
             'department'      => ['nullable', 'string', 'max:255'],
             'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,seasonal'],
             'phone_number'    => ['nullable', 'string', 'max:20'],
+            'daily_rate'      => ['nullable', 'numeric', 'min:0'],
             'hourly_rate'     => ['required', 'numeric', 'min:0'],
             'skills'          => ['nullable', 'string'],
             'joined_at'       => ['nullable', 'date'],

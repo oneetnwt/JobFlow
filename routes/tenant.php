@@ -24,6 +24,7 @@ use App\Http\Controllers\Tenant\WorkerController;
 use App\Http\Controllers\Tenant\TaskController;
 use App\Http\Controllers\Tenant\PayrollController;
 use App\Http\Controllers\Tenant\DashboardController;
+use Stancl\Tenancy\Features\UserImpersonation;
 
 Route::middleware([
     'web',
@@ -36,6 +37,9 @@ Route::middleware([
     Route::middleware('guest')->group(function () {
         Route::get('/login', [LoginController::class, 'create'])->name('tenant.login');
         Route::post('/login', [LoginController::class, 'store'])->name('tenant.login.store');
+        Route::get('/impersonate/{token}', function (string $token) {
+            return UserImpersonation::makeResponse($token);
+        })->name('tenant.impersonate');
     });
 
     // Authenticated Routes
@@ -67,6 +71,6 @@ Route::middleware([
     });
 
     Route::get('/', function () {
-        return redirect()->route('tenant.dashboard');
+        return redirect('/dashboard');
     });
 });

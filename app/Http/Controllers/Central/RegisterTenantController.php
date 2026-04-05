@@ -17,25 +17,22 @@ class RegisterTenantController extends Controller
      */
     public function create()
     {
-        $plans = \App\Models\Plan::active()->orderBy('monthly_price')->get();   
+        $plans = \App\Models\Plan::active()
+            ->where('slug', '!=', 'enterprise')
+            ->where('name', '!=', 'Enterprise')
+            ->orderBy('sort_order')
+            ->orderBy('monthly_price')
+            ->get();
 
-        // If a plan slug is passed via query string (e.g. from pricing page)   
-        $selectedPlanId = null;
-        if (request()->has('plan')) {
-            $selectedPlan = $plans->where('slug', request('plan'))->first();    
-            if ($selectedPlan) {
-                $selectedPlanId = $selectedPlan->id;
-            }
+        $selectedPlanId = old('plan_id');
+
+        if (! $selectedPlanId && request()->has('plan')) {
+            $selectedPlan = $plans->firstWhere('slug', request('plan'));
+            $selectedPlanId = $selectedPlan?->id;
         }
 
-        // Default to free plan
-        if (!$selectedPlanId) {
-            $freePlan = $plans->where('is_free', true)->first();
-            if ($freePlan) {
-                $selectedPlanId = $freePlan->id;
-            } elseif ($plans->count() > 0) {
-                $selectedPlanId = $plans->first()->id;
-            }
+        if (! $selectedPlanId) {
+            $selectedPlanId = $plans->firstWhere('is_free', true)?->id ?? $plans->first()?->id;
         }
 
         return view('central.auth.register', compact('plans', 'selectedPlanId'));
@@ -47,19 +44,19 @@ class RegisterTenantController extends Controller
     public function store(RegisterTenantRequest $request)
     {
         try {
-            $tenant = $this->onboardingService->registerTenant($request->validated());
-
-            // The specific tenant domain with scheme
-            $domain = $tenant->domains->first()->domain;
+            $result = $this->onboardingService->registerTenant($request->validated());
+            $tenant = $result['tenant'];
+            $tenantAdminUserId = $result['tenant_admin_user_id'];
             $scheme = request()->secure() ? 'https://' : 'http://';
+            $baseDomain = preg_replace('/:\\d+$/', '', (string) (config('tenancy.central_domains')[0] ?? 'localhost'));
+            $subdomain = $tenant->subdomain ?: $tenant->getTenantKey();
+            $port = request()->getPort();
+            $portSegment = in_array((int) $port, [80, 443], true) ? '' : ':' . $port;
 
-            // Free plan auto-approved and redirected
-            if ($tenant->status === 'pending') { 
-                return back()->with('pending', "Your application has been submitted. Our team will review it and contact you at {$tenant->admin_email} within 1 business day."); 
-            } 
-            
-            return redirect()->away($scheme . $domain . '/login')
-                ->with('success', "Your account is ready. You can now log in at {$domain}");    
+            // Create token and redirect to tenant-side impersonation endpoint.
+            $token = tenancy()->impersonate($tenant, (string) $tenantAdminUserId, '/dashboard', 'web');
+
+            return redirect()->away($scheme . $subdomain . '.' . $baseDomain . $portSegment . '/impersonate/' . $token->token);
         } catch (Exception $e) {
             // In a production app, we would log this and return a friendlier error
             return back()->withInput()->withErrors([

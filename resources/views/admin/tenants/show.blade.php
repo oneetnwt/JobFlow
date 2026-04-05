@@ -20,7 +20,21 @@
                     <div class="ml-6">
                         <h2 class="text-2xl font-bold tracking-tight">{{ $tenant->company_name }}</h2>
                         <div class="flex items-center mt-1 space-x-4">
-                            <span class="text-xs font-bold text-[#2D7DD2] tracking-widest uppercase">{{ $tenant->id }}.localhost:8000</span>
+                            @php
+                                $baseDomain = preg_replace('/:\\d+$/', '', (string) (config('tenancy.central_domains')[0] ?? 'localhost'));
+                                $displayHost = $tenant->domains()->value('domain')
+                                    ?? (($tenant->subdomain ?: $tenant->id) . '.' . $baseDomain);
+                                $port = request()->getPort();
+                                $portSegment = in_array((int) $port, [80, 443], true) ? '' : ':' . $port;
+                            @endphp
+                            <a
+                                href="{{ (request()->secure() ? 'https://' : 'http://') . $displayHost . $portSegment }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-xs font-bold text-[#2D7DD2] tracking-widest uppercase hover:underline"
+                            >
+                                {{ $displayHost }}{{ $portSegment }}
+                            </a>
                             <span class="h-1 w-1 rounded-full bg-slate-600"></span>
                             <span class="text-xs font-bold uppercase tracking-widest
                                 {{ $tenant->status === 'active' ? 'text-emerald-400' : '' }}

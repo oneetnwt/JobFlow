@@ -21,7 +21,7 @@ class AdminAuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials + ['is_super_admin' => true], $request->boolean('remember'))) {
+        if (! Auth::guard('central')->attempt($credentials + ['is_super_admin' => true], $request->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
@@ -34,7 +34,7 @@ class AdminAuthController extends Controller
 
     public function destroy(Request $request)
     {
-        Auth::logout();
+        Auth::guard('central')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
