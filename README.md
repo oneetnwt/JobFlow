@@ -1,14 +1,8 @@
 # JobFlow OMS
 
-```text
- _       _     ______ _
-| | ___ | |__ |  ____| | _____      __
-| |/ _ \| '_ \| |__  | |/ _ \ \ /\ / /
-| | (_) | |_) |  __| | | (_) \ V  V /
-|_|\___/|_.__/|_|    |_|\___/ \_/\_/
-
-        J O B F L O W   O M S
-```
+<p align="center">
+	<img src="docs/jobflow-banner.svg" alt="JobFlow OMS banner" width="980">
+</p>
 
 Enterprise Job Order Management System
 
