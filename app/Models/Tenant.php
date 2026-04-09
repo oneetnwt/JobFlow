@@ -44,4 +44,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     {
         return $this->belongsTo(Plan::class);
     }
+
+    /**
+     * Get the latest central plan record for this tenant.
+     */
+    public function tenantPlan()
+    {
+        return $this->hasOne(TenantPlan::class)->latestOfMany('valid_until');
+    }
 }

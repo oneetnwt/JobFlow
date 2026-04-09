@@ -19,7 +19,7 @@
                 The multitenant Job Order Management System engineered for high-stakes logistics, workforce scheduling, and automated payroll.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-                <a href="{{ route('tenant.register.create') }}" class="px-8 py-4 bg-[#0F172A] text-white rounded-lg font-bold text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
+                <a href="{{ route('tenant.register.create') }}" class="px-8 py-4 bg-[var(--color-accent)] !text-white rounded-lg font-bold text-lg hover:bg-[var(--color-accent-mid)] hover:!text-white transition-all shadow-xl shadow-slate-200">
                     Create Your Workspace
                 </a>
                 <a href="#features" class="px-8 py-4 bg-white text-[#0F172A] border border-slate-200 rounded-lg font-bold text-lg hover:bg-slate-50 transition-all">
@@ -72,7 +72,7 @@
                     <div class="flex items-center text-xs font-bold text-green-600 mb-1">
                         <span class="h-2 w-2 rounded-full bg-green-500 mr-2"></span> Released
                     </div>
-                    <div class="text-xl font-bold text-[#0F172A]">$12,450.00</div>
+                    <div class="text-xl font-bold text-[#0F172A]">₱12,450.00</div>
                 </div>
             </div>
         </div>

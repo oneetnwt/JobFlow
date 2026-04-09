@@ -6,7 +6,7 @@
     <title>Super Admin Login | JobFlow OMS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .industrial-grid {
@@ -17,7 +17,7 @@
         }
     </style>
 </head>
-<body class="h-full bg-[var(--color-bg)] industrial-grid flex flex-col justify-center py-[var(--space-12)] sm:px-6 lg:px-8 relative">
+<body class="h-full industrial-theme bg-[var(--color-bg)] industrial-grid flex flex-col justify-center py-[var(--space-12)] sm:px-6 lg:px-8 relative">
 
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10">
         <a href="{{ route('home') }}" class="inline-flex items-center gap-[var(--space-3)] mb-[var(--space-6)] text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors">

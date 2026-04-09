@@ -47,7 +47,7 @@
                             </div>
                             <div class="flex items-center text-xs text-slate-500">
                                 <span class="font-semibold w-24">Hourly Rate:</span>
-                                <span class="text-[#0F1B2D] font-medium">${{ number_format($worker->profile?->hourly_rate ?? 0, 2) }}</span>
+                                <span class="text-[#0F1B2D] font-medium">₱{{ number_format($worker->profile?->hourly_rate ?? 0, 2) }}</span>
                             </div>
                         </div>
                     </div>

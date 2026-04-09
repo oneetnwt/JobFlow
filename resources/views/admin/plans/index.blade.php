@@ -1,6 +1,10 @@
 <x-layouts.admin>
     <x-slot name="header">Pricing Models</x-slot>
 
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+
     <div x-data="adminPlanManager()" class="flex flex-col h-full relative" @keydown.escape.window="closeDrawer()">
         
         <!-- Header & Action -->
@@ -87,7 +91,7 @@
                             <button @click="openDrawer({{ $plan->toJson() }})" class="flex-1 h-[32px] bg-[var(--color-bg-subtle)] hover:bg-[var(--color-border)] text-[var(--color-text-primary)] rounded-[4px] text-[11px] font-[600] uppercase tracking-widest transition-colors">
                                 Edit
                             </button>
-                            <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline-block" onsubmit="return confirm('Retire this plan?');">
+                            <form action="{{ route('admin.plans.destroy', $plan) }}" method="POST" class="inline-block" data-confirm="Retire this plan?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="w-[32px] h-[32px] flex items-center justify-center border border-[var(--color-border)] hover:bg-[var(--color-error-subtle)] hover:text-[var(--color-error)] hover:border-[var(--color-error)] rounded-[4px] text-[var(--color-text-muted)] transition-colors">
@@ -100,27 +104,28 @@
             @endforeach
         </div>
 
-        <!-- Backdrop -->
-        <div x-show="drawerOpen" x-transition.opacity.duration.300ms class="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm" @click="closeDrawer()" style="display: none;"></div>
+        <template x-teleport="body">
+            <div x-cloak x-show="drawerOpen" class="fixed inset-0 z-[9998]" role="dialog" aria-modal="true">
+                <!-- Modal Backdrop -->
+                <div x-show="drawerOpen" x-transition.opacity.duration.200ms class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="closeDrawer()"></div>
 
-        <!-- Slide-out Drawer Panel -->
-        <div class="fixed top-0 right-0 h-full w-[400px] bg-[var(--color-surface)] shadow-[var(--shadow-3)] z-50 transform transition-transform duration-300 ease-in-out flex flex-col border-l border-[var(--color-border-strong)]"
-             :class="drawerOpen ? 'translate-x-0' : 'translate-x-full'">
-            
-            <div class="flex items-center justify-between px-[24px] py-[20px] border-b border-[var(--color-border)] bg-[var(--color-bg)]">
-                <h2 class="font-display text-[20px] text-[var(--color-text-primary)]" x-text="isEditing ? 'Edit Plan' : 'New Plan'"></h2>
-                <button @click="closeDrawer()" class="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
+                <!-- Modal Dialog -->
+                <div x-show="drawerOpen" x-transition.opacity.duration.200ms class="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
+                    <div class="w-full max-w-[980px] max-h-[90vh] bg-[var(--color-surface)] border border-[var(--color-border-strong)] shadow-[var(--shadow-3)] overflow-hidden flex flex-col" @click.stop>
+                        <div class="flex items-center justify-between px-[24px] py-[18px] border-b border-[var(--color-border)] bg-[var(--color-bg)]">
+                            <h2 class="font-display text-[20px] text-[var(--color-text-primary)]" x-text="isEditing ? 'Edit Plan' : 'Create New Plan'"></h2>
+                            <button @click="closeDrawer()" class="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors" aria-label="Close dialog">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
 
-            <div class="flex-1 overflow-y-auto p-[24px]">
-                <form id="planForm" method="POST" :action="formAction">
+                        <div class="flex-1 overflow-y-auto p-[24px]">
+                            <form id="planForm" method="POST" :action="formAction" class="grid grid-cols-1 lg:grid-cols-2 gap-[16px]">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="_method" :value="isEditing ? 'PUT' : 'POST'">
                     
                     <!-- Basic Info Box -->
-                    <div class="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[8px] p-[20px] mb-[24px]">
+                    <div class="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[8px] p-[20px]">
                         <h3 class="text-[11px] uppercase tracking-widest font-[600] text-[var(--color-text-secondary)] mb-[16px]">Core Identification</h3>
                         
                         <div class="space-y-[16px]">
@@ -153,7 +158,7 @@
                     </div>
 
                     <!-- Pricing Box -->
-                    <div class="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[8px] p-[20px] mb-[24px]">
+                    <div class="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[8px] p-[20px]">
                         <h3 class="text-[11px] uppercase tracking-widest font-[600] text-[var(--color-text-secondary)] mb-[16px]">Pricing Structure</h3>
                         
                         <div class="space-y-[16px]">
@@ -188,7 +193,7 @@
                     </div>
 
                     <!-- Limits Box -->
-                    <div class="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[8px] p-[20px] mb-[24px]">
+                    <div class="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[8px] p-[20px]">
                         <h3 class="text-[11px] uppercase tracking-widest font-[600] text-[var(--color-text-secondary)] mb-[16px]">Usage Limits</h3>
                         
                         <div class="grid grid-cols-2 gap-[16px]">
@@ -212,7 +217,7 @@
                     </div>
 
                     <!-- Features -->
-                    <div class="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[8px] p-[20px] mb-[24px]">
+                    <div class="bg-[var(--color-bg-subtle)] border border-[var(--color-border)] rounded-[8px] p-[20px] lg:col-span-2">
                         <h3 class="text-[11px] uppercase tracking-widest font-[600] text-[var(--color-text-secondary)] mb-[16px]">Features</h3>
                         <p class="text-[12px] text-[var(--color-text-muted)] mb-[12px]">Enter one feature per line. These display with checkmarks on the pricing card.</p>
                         
@@ -220,15 +225,18 @@
                     </div>
 
                     <!-- Submit -->
-                    <div class="flex justify-end pt-[12px]">
+                    <div class="flex justify-end pt-[12px] lg:col-span-2 border-t border-[var(--color-border)] mt-[4px]">
                         <button type="button" @click="closeDrawer()" class="h-[40px] px-[20px] text-[13px] font-[600] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] mr-[12px]">Cancel</button>
                         <button type="submit" class="h-[40px] px-[24px] bg-[var(--color-accent)] hover:opacity-90 text-white rounded-[5px] text-[13px] font-[600] tracking-wide transition-opacity shadow-[var(--shadow-1)]">
                             Save Configuration
                         </button>
                     </div>
-                </form>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </template>
 
     </div>
 

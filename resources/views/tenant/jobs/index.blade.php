@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="flex flex-col">
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex justify-between items-center mb-3">
             <p class="text-sm text-slate-500">Manage and track work requests for your organization.</p>
             <a href="{{ route('tenant.jobs.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#2D7DD2] hover:bg-[#1E3A5F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2D7DD2] transition-colors">
                 New Job Order

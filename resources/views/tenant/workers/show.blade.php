@@ -69,7 +69,7 @@
                             <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Financials</h4>
                             <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
                                 <p class="text-xs text-slate-500">Hourly Pay Rate</p>
-                                <p class="text-2xl font-bold text-[#0F1B2D] mt-1">${{ number_format($worker->profile?->hourly_rate ?? 0, 2) }}</p>
+                                <p class="text-2xl font-bold text-[#0F1B2D] mt-1">₱{{ number_format($worker->profile?->hourly_rate ?? 0, 2) }}</p>
                             </div>
                         </div>
                         <div>
@@ -99,7 +99,7 @@
 
             <!-- Footer -->
             <div class="px-8 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
-                <form action="{{ route('tenant.workers.destroy', $worker) }}" method="POST" onsubmit="return confirm('Permanently remove this worker and all associated profile data?')">
+                <form action="{{ route('tenant.workers.destroy', $worker) }}" method="POST" data-confirm="Permanently remove this worker and all associated profile data?">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="text-xs font-bold text-red-500 hover:text-red-700 transition-colors uppercase tracking-tight">

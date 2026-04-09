@@ -49,7 +49,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-[#0F1B2D]">
-                                ${{ number_format($period->total_amount, 2) }}
+                                ₱{{ number_format($period->total_amount, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a href="{{ route('tenant.payroll.show', $period) }}" class="text-[#2D7DD2] hover:text-[#1E3A5F]">View Slips</a>

@@ -80,7 +80,7 @@
                         </div>
 
                         <div>
-                            <label for="hourly_rate" class="block text-sm font-medium text-[#1E3A5F]">Hourly Rate ($)</label>
+                            <label for="hourly_rate" class="block text-sm font-medium text-[#1E3A5F]">Hourly Rate (₱)</label>
                             <input type="number" step="0.01" name="hourly_rate" id="hourly_rate" value="{{ old('hourly_rate', '0.00') }}"
                                    class="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#2D7DD2] focus:border-[#2D7DD2] sm:text-sm">
                             @error('hourly_rate') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror

@@ -162,7 +162,7 @@
             </div>
             
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between">
-                <form action="{{ route('tenant.jobs.destroy', $job) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job order?')">
+                <form action="{{ route('tenant.jobs.destroy', $job) }}" method="POST" data-confirm="Are you sure you want to delete this job order?">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-800 transition-colors">

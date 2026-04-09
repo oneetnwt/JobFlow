@@ -2,12 +2,11 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-
-use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
-use App\Models\User;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
             $host = $request->getHost();
 
             if (str_starts_with($host, 'admin.')) {
-                return route('admin.login');
+                return '/login';
             }
 
             return '/login';

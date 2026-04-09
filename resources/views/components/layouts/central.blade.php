@@ -7,19 +7,14 @@
 
     <title>{{ config('app.name', 'JobFlow OMS') }}</title>
 
-    <!-- Google Fonts: DM Sans for logic/labels, Merriweather for titles where needed -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-
-    <style>
-        body { font-family: 'DM Sans', sans-serif; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Vite Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full font-sans text-slate-800 bg-[#F9FAFB]">
+<body class="h-full industrial-theme text-[var(--color-text-primary)] bg-[var(--color-bg)]">
 
     <div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">

@@ -50,13 +50,13 @@
                     @if($tenant->status !== 'active')
                         <form action="{{ route('admin.tenants.approve', $tenant) }}" method="POST">
                             @csrf
-                            <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-md text-xs font-bold uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-900/20">
+                            <button type="submit" class="px-4 py-2 bg-[var(--color-accent)] text-white! border border-[var(--color-accent)] rounded-md text-xs font-bold uppercase tracking-widest hover:bg-[var(--color-accent-mid)] hover:text-white! transition-all shadow-lg shadow-emerald-900/20">
                                 Approve Account
                             </button>
                         </form>
                     @endif
                     @if($tenant->status === 'active')
-                        <form action="{{ route('admin.tenants.suspend', $tenant) }}" method="POST" onsubmit="return confirm('Immediately suspend this workspace?')">
+                        <form action="{{ route('admin.tenants.suspend', $tenant) }}" method="POST" data-confirm="Immediately suspend this workspace?">
                             @csrf
                             <button type="submit" class="px-4 py-2 border border-rose-500/50 text-rose-400 rounded-md text-xs font-bold uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all">
                                 Suspend Access
@@ -82,7 +82,7 @@
                 </div>
                 <div class="p-6 text-center">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Payroll Value</p>
-                    <p class="mt-2 text-2xl font-black text-emerald-600">${{ number_format($metrics['total_payroll_value'], 2) }}</p>
+                    <p class="mt-2 text-2xl font-black text-emerald-600">₱{{ number_format($metrics['total_payroll_value'], 2) }}</p>
                 </div>
             </div>
 

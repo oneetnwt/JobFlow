@@ -30,7 +30,7 @@
             <div class="card p-5 border-t-4 border-t-warning relative">
                 <dt class="text-xs font-bold text-muted uppercase tracking-widest">Pending Payroll</dt>
                 <dd class="mt-2 text-3xl font-extrabold text-foreground">
-                    ${{ number_format($stats['pending_payroll'] ?? 0, 2) }}
+                    ₱{{ number_format($stats['pending_payroll'] ?? 0, 2) }}
                 </dd>
             </div>
 

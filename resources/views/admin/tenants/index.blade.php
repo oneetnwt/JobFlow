@@ -14,6 +14,8 @@
                     <tr>
                         <th class="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Organization Details</th>
                         <th class="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subdomain</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plan</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plan Period</th>
                         <th class="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
                         <th class="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">Operations</th>
                     </tr>
@@ -31,6 +33,7 @@
                             <td class="px-6 py-4">
                                 <div class="text-sm font-bold text-[#0F172A]">{{ $tenant->company_name }}</div>
                                 <div class="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-0.5">UID: {{ $tenant->id }}</div>
+                                <div class="text-[11px] text-slate-500 mt-1">Admin: {{ $tenant->admin_email }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <a
@@ -41,6 +44,26 @@
                                 >
                                     {{ $displayHost }}{{ $portSegment }}
                                 </a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                    $planName = $tenant->tenantPlan?->plan_name ?? $tenant->plan?->name;
+                                @endphp
+                                @if($planName)
+                                    <span class="text-xs font-bold uppercase tracking-widest text-[#0F172A]">{{ $planName }}</span>
+                                @else
+                                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">No plan</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($tenant->tenantPlan)
+                                    <div class="text-[11px] text-slate-500 uppercase tracking-widest font-bold">Start</div>
+                                    <div class="text-sm font-semibold text-[#0F172A]">{{ optional($tenant->tenantPlan->created_at)->format('M d, Y') }}</div>
+                                    <div class="text-[11px] text-slate-500 uppercase tracking-widest font-bold mt-1">End</div>
+                                    <div class="text-sm font-semibold text-[#0F172A]">{{ optional($tenant->tenantPlan->valid_until)->format('M d, Y') }}</div>
+                                @else
+                                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">No plan data</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2.5 py-1 text-[10px] font-black rounded uppercase tracking-tighter
@@ -57,12 +80,12 @@
                                 @if($tenant->status !== 'active')
                                     <form action="{{ route('admin.tenants.approve', $tenant) }}" method="POST" class="inline">
                                         @csrf
-                                        <button type="submit" class="text-[10px] font-bold bg-[#0F172A] text-white px-3 py-1.5 rounded hover:bg-slate-800 transition-all uppercase tracking-widest shadow-sm">Approve</button>
+                                        <button type="submit" class="text-[10px] font-bold bg-[var(--color-accent)] text-white! border border-[var(--color-accent)] px-3 py-1.5 rounded hover:bg-[var(--color-accent-mid)] hover:text-white! transition-all uppercase tracking-widest shadow-sm">Approve</button>
                                     </form>
                                 @endif
 
                                 @if($tenant->status === 'active')
-                                    <form action="{{ route('admin.tenants.suspend', $tenant) }}" method="POST" class="inline" onsubmit="return confirm('Suspend this workspace?')">
+                                    <form action="{{ route('admin.tenants.suspend', $tenant) }}" method="POST" class="inline" data-confirm="Suspend this workspace?">
                                         @csrf
                                         <button type="submit" class="text-[10px] font-bold border border-rose-200 text-rose-600 px-3 py-1.5 rounded hover:bg-rose-50 transition-all uppercase tracking-widest">Suspend</button>
                                     </form>

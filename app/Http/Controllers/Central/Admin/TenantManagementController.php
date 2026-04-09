@@ -11,37 +11,58 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\Central\TenantApprovedNotification;
 
 use App\Services\Central\PlatformActivityService;
+use App\Services\Central\TenantOnboardingService;
+use Throwable;
 
 class TenantManagementController extends Controller
 {
-    public function __construct(protected PlatformActivityService $activityService)
+    public function __construct(
+        protected PlatformActivityService $activityService,
+        protected TenantOnboardingService $onboardingService,
+    )
     {}
 
     public function index(): View
     {
-        $tenants = Tenant::latest()->paginate(15);
+        $tenants = Tenant::with(['tenantPlan', 'plan'])->latest()->paginate(15);
         return view('admin.tenants.index', compact('tenants'));
     }
 
     public function show(Tenant $tenant): View
     {
-        // Peek into the tenant database to get metrics
-        $metrics = $tenant->run(function () {
-            return [
-                'workers_count' => \App\Models\User::workers()->count(),
-                'jobs_count' => \App\Models\JobOrder::count(),
-                'tasks_count' => \App\Models\Task::count(),
-                'payroll_periods_count' => \App\Models\PayrollPeriod::count(),
-                'total_payroll_value' => \App\Models\PayrollPeriod::sum('total_amount'),
-            ];
-        });
+        $metrics = [
+            'workers_count' => 0,
+            'jobs_count' => 0,
+            'tasks_count' => 0,
+            'payroll_periods_count' => 0,
+            'total_payroll_value' => 0,
+        ];
+
+        // Pending/suspended workspaces may not have a provisioned tenant DB yet.
+        if ($tenant->status === 'active') {
+            $metrics = $tenant->run(function () {
+                return [
+                    'workers_count' => \App\Models\User::workers()->count(),
+                    'jobs_count' => \App\Models\JobOrder::count(),
+                    'tasks_count' => \App\Models\Task::count(),
+                    'payroll_periods_count' => \App\Models\PayrollPeriod::count(),
+                    'total_payroll_value' => \App\Models\PayrollPeriod::sum('total_amount'),
+                ];
+            });
+        }
 
         return view('admin.tenants.show', compact('tenant', 'metrics'));
     }
 
     public function approve(Tenant $tenant)
     {
-        $tenant->update(['status' => 'active']);
+        try {
+            $this->onboardingService->approveTenant($tenant);
+        } catch (Throwable $e) {
+            return back()->withErrors([
+                'approval' => "Failed to approve tenant '{$tenant->company_name}'. Please try again. Error: {$e->getMessage()}",
+            ]);
+        }
 
         // Log the action
         $this->activityService->log(

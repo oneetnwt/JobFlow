@@ -16,6 +16,12 @@
                 </div>
             @endif
 
+            @if (session('success'))
+                <div class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
                 <form action="{{ route('tenant.register.store') }}" method="POST" class="space-y-5">
                     @csrf
@@ -123,7 +129,7 @@
                                                 @elseif($plan->is_contact_sales)
                                                     <span class="text-sm font-bold text-slate-700">Custom</span>
                                                 @else
-                                                    <span class="text-sm font-bold text-slate-700">PHP {{ number_format((float) $plan->monthly_price, 2) }}/mo</span>
+                                                    <span class="text-sm font-bold text-slate-700">₱{{ number_format((float) $plan->monthly_price, 2) }}/mo</span>
                                                 @endif
                                             </span>
                                             @if(!empty($plan->tagline))

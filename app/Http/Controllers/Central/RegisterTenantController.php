@@ -44,23 +44,13 @@ class RegisterTenantController extends Controller
     public function store(RegisterTenantRequest $request)
     {
         try {
-            $result = $this->onboardingService->registerTenant($request->validated());
-            $tenant = $result['tenant'];
-            $tenantAdminUserId = $result['tenant_admin_user_id'];
-            $scheme = request()->secure() ? 'https://' : 'http://';
-            $baseDomain = preg_replace('/:\\d+$/', '', (string) (config('tenancy.central_domains')[0] ?? 'localhost'));
-            $subdomain = $tenant->subdomain ?: $tenant->getTenantKey();
-            $port = request()->getPort();
-            $portSegment = in_array((int) $port, [80, 443], true) ? '' : ':' . $port;
+            $this->onboardingService->registerTenant($request->validated());
 
-            // Create token and redirect to tenant-side impersonation endpoint.
-            $token = tenancy()->impersonate($tenant, (string) $tenantAdminUserId, '/dashboard', 'web');
-
-            return redirect()->away($scheme . $subdomain . '.' . $baseDomain . $portSegment . '/impersonate/' . $token->token);
+            return redirect()->route('tenant.register.create')->with('success', 'Registration received. Your workspace will be provisioned after admin approval.');
         } catch (Exception $e) {
             // In a production app, we would log this and return a friendlier error
             return back()->withInput()->withErrors([
-                'domain' => 'Failed to provision tenant workspace. Please try again or choose a different subdomain. Error: ' . $e->getMessage(),
+                'domain' => 'Failed to submit tenant registration request. Please try again or choose a different subdomain. Error: ' . $e->getMessage(),
             ]);
         }
     }

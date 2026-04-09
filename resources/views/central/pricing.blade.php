@@ -1,9 +1,13 @@
 <x-layouts.landing>
     <x-slot name="header">Pricing</x-slot>
 
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+
     <div x-data="{ billing: 'monthly' }" class="w-full bg-[var(--color-bg)] py-[80px]">
         <!-- Page Header Section -->
-        <div class="max-w-[1100px] mx-auto px-4 sm:px-6 flex flex-col items-center">
+        <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
             <h2 class="text-[11px] uppercase tracking-widest text-[var(--color-accent)] font-[600] mb-4">Pricing</h2>
             <h1 class="font-display text-[42px] leading-[1.15] text-[var(--color-text-primary)] text-center mb-4">Simple, transparent pricing</h1>
             <p class="text-[16px] text-[var(--color-text-secondary)] text-center max-w-[520px] mb-8">
@@ -32,12 +36,14 @@
             </div>
 
             <!-- Pricing Cards Grid -->
-            <div class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[20px] items-start">
+            <div class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 items-start">
                 @foreach($plans as $plan)
                     @php
                         $isFeatured = $plan->slug === 'professional';
                         $bg = $isFeatured ? 'var(--color-dark-bg)' : 'var(--color-surface)';
-                        $border = $isFeatured ? 'var(--color-accent)' : ($plan->slug === 'enterprise' ? 'var(--color-border-strong)' : 'var(--color-border)');
+                        $border = $isFeatured
+                            ? 'var(--color-accent)'
+                            : ($plan->slug === 'enterprise' ? 'rgba(154, 149, 141, 0.55)' : 'rgba(154, 149, 141, 0.38)');
                         $shadow = $isFeatured ? 'var(--shadow-3)' : ($plan->is_free ? 'none' : 'var(--shadow-1)');
                         $textPrimary = $isFeatured ? 'var(--color-dark-text)' : 'var(--color-text-primary)';
                         $textMuted = $isFeatured ? 'var(--color-dark-text-muted)' : 'var(--color-text-muted)';
@@ -64,9 +70,9 @@
                         @endif
 
                         <!-- Header -->
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-ui text-[15px] font-[600] tracking-[0.04em] uppercase" style="color: {{ $textPrimary }}">{{ $plan->name }}</h3>
-                            <div class="text-right flex flex-col relative h-[60px] w-full items-end">
+                        <div class="flex items-start gap-[12px]">
+                            <h3 class="font-ui text-[15px] font-[600] tracking-[0.04em] uppercase flex-1 min-w-0" style="color: {{ $textPrimary }}">{{ $plan->name }}</h3>
+                            <div class="text-right flex flex-col min-h-[72px] items-end justify-start shrink-0">
                                 @if($plan->is_contact_sales)
                                     <div class="font-display text-[32px] leading-none" style="color: {{ $textPrimary }}">Custom</div>
                                     <div class="text-[12px] font-[400] mt-1 whitespace-nowrap" style="color: {{ $textMuted }}">Contact our team</div>
@@ -76,15 +82,13 @@
                                     </div>
                                 @else
                                     <!-- Monthly Price -->
-                                    <div class="absolute right-0 top-0 transition-opacity duration-200"
-                                         :class="billing === 'monthly' ? 'opacity-100 z-10' : 'opacity-0 z-0'">
+                                    <div x-show="billing === 'monthly'" x-transition.opacity.duration.200ms class="text-right">
                                         <div class="font-display text-[40px] leading-none whitespace-nowrap" style="color: {{ $textPrimary }}">
                                             <span class="text-[20px] align-top">₱</span>{{ number_format($plan->monthly_price) }}<span class="text-[14px] font-[400]" style="color: {{ $textMuted }}">/month</span>
                                         </div>
                                     </div>
                                     <!-- Annual Price --><!-- Animation requirements explicitly requested: fade out up, new price fades in down - 200ms -->
-                                    <div class="absolute right-0 top-0 text-right transition-opacity duration-200"
-                                         :class="billing === 'annual' ? 'opacity-100 z-10' : 'opacity-0 z-0'">
+                                    <div x-cloak x-show="billing === 'annual'" x-transition.opacity.duration.200ms class="text-right">
                                         <div class="font-display text-[32px] leading-none whitespace-nowrap" style="color: {{ $textPrimary }}">
                                             <span class="text-[18px] align-top">₱</span>{{ number_format($plan->annual_price) }}<span class="text-[14px] font-[400]" style="color: {{ $textMuted }}">/year</span>
                                         </div>
@@ -111,7 +115,7 @@
                         </ul>
 
                         <!-- CTA -->
-                        <a href="{{ route('tenant.register') }}?plan={{ $plan->slug }}" 
+                                <a href="{{ route('tenant.register.create') }}?plan={{ $plan->slug }}" 
                            class="mt-[24px] w-full h-[40px] flex items-center justify-center text-[12px] font-[600] uppercase tracking-[0.08em] rounded-[5px] transition-colors"
                            style="
                                 @if($isFeatured)
