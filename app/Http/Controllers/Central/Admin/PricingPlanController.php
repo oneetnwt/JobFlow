@@ -15,7 +15,7 @@ class PricingPlanController extends Controller
      */
     public function index(): View
     {
-        $plans = Plan::withCount(['tenants' => function($q) {
+        $plans = Plan::withCount(['tenants' => function ($q) {
             $q->where('status', 'active');
         }])->orderBy('sort_order')->withTrashed()->get();
 
@@ -29,10 +29,10 @@ class PricingPlanController extends Controller
     {
         $validated = $this->validatePlan($request);
         $validated['slug'] = Str::slug($validated['slug'] ?? $validated['name']);
-        if (!$validated['slug']) {
-             $validated['slug'] = Str::slug($validated['name']);
+        if (! $validated['slug']) {
+            $validated['slug'] = Str::slug($validated['name']);
         }
-        
+
         $validated['currency'] = 'PHP'; // default currency
 
         Plan::create($validated);
@@ -47,10 +47,10 @@ class PricingPlanController extends Controller
     {
         $validated = $this->validatePlan($request, $plan->id);
         $validated['slug'] = Str::slug($validated['slug'] ?? $validated['name']);
-        if (!$validated['slug']) {
-             $validated['slug'] = Str::slug($validated['name']);
+        if (! $validated['slug']) {
+            $validated['slug'] = Str::slug($validated['name']);
         }
-        
+
         $plan->update($validated);
 
         return back()->with('success', 'Pricing plan updated successfully.');
@@ -65,18 +65,20 @@ class PricingPlanController extends Controller
             // If active tenants exist, we archive (soft delete) instead of hard delete
             $plan->update(['status' => 'archived']);
             $plan->delete();
+
             return back()->with('success', 'Plan has been archived and hidden from new signups. Existing tenants are unaffected.');
         }
 
         $plan->forceDelete();
-        return back()->with('success', 'Pricing plan deleted permanently.');    
+
+        return back()->with('success', 'Pricing plan deleted permanently.');
     }
 
     protected function validatePlan(Request $request, $ignoreId = null): array
     {
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:plans,slug,' . $ignoreId],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:plans,slug,'.$ignoreId],
             'tagline' => ['nullable', 'string', 'max:500'],
             'is_free' => ['boolean'],
             'is_contact_sales' => ['boolean'],
@@ -90,7 +92,7 @@ class PricingPlanController extends Controller
             'auto_approve' => ['boolean'],
             'features' => ['nullable', 'array'],
             'badge_label' => ['nullable', 'string', 'max:50'],
-            'status' => ['required', 'string', 'in:draft,active,archived'],     
+            'status' => ['required', 'string', 'in:draft,active,archived'],
             'sort_order' => ['nullable', 'integer'],
         ]);
     }

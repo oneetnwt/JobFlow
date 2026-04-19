@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobOrder;
-use App\Models\User;
 use App\Models\PayrollPeriod;
+use App\Models\User;
 use Illuminate\View\View;
 
 class DashboardController extends Controller

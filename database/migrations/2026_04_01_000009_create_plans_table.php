@@ -16,27 +16,27 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('description')->nullable();
-            
+
             // Pricing
             $table->decimal('monthly_price', 10, 2)->default(0);
             $table->decimal('annual_price', 10, 2)->default(0);
-            
+
             // Limits
             $table->integer('max_workers')->nullable(); // null = unlimited
             $table->integer('max_jobs_per_month')->nullable(); // null = unlimited
-            
+
             // Feature Toggles
             $table->boolean('has_payroll')->default(false);
             $table->boolean('has_priority_support')->default(false);
             $table->boolean('has_custom_integrations')->default(false);
-            
+
             // Dynamic Features List
             $table->json('features')->nullable();
-            
+
             // Metadata & Status
             $table->string('badge_label')->nullable(); // e.g., "Most Popular"
             $table->string('status')->default('draft'); // draft, active, archived
-            
+
             $table->timestamps();
             $table->softDeletes();
         });

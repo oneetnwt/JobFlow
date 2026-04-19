@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\WorkerRequest;
 use App\Models\Employee;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +32,9 @@ class WorkerController extends Controller
      */
     public function create(): View
     {
-        return view('tenant.workers.create');
+        $roles = Role::all();
+
+        return view('tenant.workers.create', compact('roles'));
     }
 
     /**
@@ -44,12 +47,19 @@ class WorkerController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => $request->role,
             ]);
 
+            // Assign the requested role
+            $user->assignRole($request->role ?? 'worker');
+
             $user->profile()->create($request->only([
-                'employee_id', 'department', 'skills', 'employment_type', 
-                'phone_number', 'joined_at', 'hourly_rate'
+                'employee_id',
+                'department',
+                'skills',
+                'employment_type',
+                'phone_number',
+                'joined_at',
+                'hourly_rate',
             ]));
 
             Employee::create([
@@ -61,6 +71,9 @@ class WorkerController extends Controller
                 'hourly_rate' => $request->hourly_rate,
                 'status' => 'active',
             ]);
+
+            // Send verification email to the new worker
+            $user->sendEmailVerificationNotification();
         });
 
         return redirect()->route('tenant.workers.index')
@@ -73,6 +86,7 @@ class WorkerController extends Controller
     public function show(User $worker): View
     {
         $worker->load('profile');
+
         return view('tenant.workers.show', compact('worker'));
     }
 
@@ -82,7 +96,9 @@ class WorkerController extends Controller
     public function edit(User $worker): View
     {
         $worker->load('profile');
-        return view('tenant.workers.edit', compact('worker'));
+        $roles = Role::all();
+
+        return view('tenant.workers.edit', compact('worker', 'roles'));
     }
 
     /**
@@ -94,7 +110,6 @@ class WorkerController extends Controller
             $userData = [
                 'name' => $request->name,
                 'email' => $request->email,
-                'role' => $request->role,
             ];
 
             if ($request->filled('password')) {
@@ -103,11 +118,22 @@ class WorkerController extends Controller
 
             $worker->update($userData);
 
+            // Re-assign role
+            if ($request->filled('role')) {
+                $worker->roles()->detach();
+                $worker->assignRole($request->role);
+            }
+
             $worker->profile()->updateOrCreate(
                 ['user_id' => $worker->id],
                 $request->only([
-                    'employee_id', 'department', 'skills', 'employment_type', 
-                    'phone_number', 'joined_at', 'hourly_rate'
+                    'employee_id',
+                    'department',
+                    'skills',
+                    'employment_type',
+                    'phone_number',
+                    'joined_at',
+                    'hourly_rate',
                 ])
             );
 

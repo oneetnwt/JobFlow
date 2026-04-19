@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users'); // The admin who performed the action
             $table->string('tenant_id')->nullable(); // Associated tenant (optional)
-            
+
             $table->string('event'); // e.g., "tenant.approved", "tenant.registered"
             $table->text('description');
             $table->json('properties')->nullable(); // Metadata
-            
+
             $table->string('ip_address', 45)->nullable();
             $table->timestamps();
         });

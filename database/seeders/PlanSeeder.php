@@ -23,7 +23,7 @@ class PlanSeeder extends Seeder
                 'annual_price' => 0.00, // Monthly × 10 formula, 0*10=0
                 'currency' => 'PHP',
                 // Using exact integer max values. Null represents unlimited.
-                'max_workers' => 3, 
+                'max_workers' => 3,
                 'max_job_orders' => 20,
                 'has_payroll' => false,
                 'has_priority_support' => false,
@@ -50,7 +50,7 @@ class PlanSeeder extends Seeder
                 'tagline' => 'For small businesses ready to organize their operations',
                 'monthly_price' => 999.00,
                 // Annual pricing formula: monthly price × 10 (2 months free standard PH SaaS)
-                'annual_price' => 9990.00, 
+                'annual_price' => 9990.00,
                 'currency' => 'PHP',
                 'max_workers' => 10,
                 'max_job_orders' => 150,
@@ -60,7 +60,7 @@ class PlanSeeder extends Seeder
                 'auto_approve' => false,
                 'is_contact_sales' => false,
                 // Use null for no badge per guidelines, do not use empty string
-                'badge_label' => null, 
+                'badge_label' => null,
                 'status' => 'active',
                 // Keep sort_order sequential
                 'sort_order' => 2,
@@ -165,11 +165,11 @@ class PlanSeeder extends Seeder
             );
 
             $action = $exists ? 'UPDATED' : 'CREATED';
-            
+
             if ($planData['is_contact_sales']) {
                 $priceStr = 'Contact Sales';
             } else {
-                $priceStr = '₱' . number_format($planData['monthly_price'], 2) . '/month';
+                $priceStr = '₱'.number_format($planData['monthly_price'], 2).'/month';
             }
 
             $this->command->info("[{$action}] {$planData['name']} — {$priceStr}");

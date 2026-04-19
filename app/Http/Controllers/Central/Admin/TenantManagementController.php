@@ -3,28 +3,27 @@
 namespace App\Http\Controllers\Central\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\JobOrder;
+use App\Models\PayrollPeriod;
+use App\Models\Task;
 use App\Models\Tenant;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\Central\TenantApprovedNotification;
-
+use App\Models\User;
 use App\Services\Central\PlatformActivityService;
 use App\Services\Central\TenantOnboardingService;
-use Throwable;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class TenantManagementController extends Controller
 {
     public function __construct(
         protected PlatformActivityService $activityService,
         protected TenantOnboardingService $onboardingService,
-    )
-    {}
+    ) {}
 
     public function index(): View
     {
         $tenants = Tenant::with(['tenantPlan', 'plan'])->latest()->paginate(15);
+
         return view('admin.tenants.index', compact('tenants'));
     }
 
@@ -38,58 +37,17 @@ class TenantManagementController extends Controller
             'total_payroll_value' => 0,
         ];
 
-        // Pending/suspended workspaces may not have a provisioned tenant DB yet.
-        if ($tenant->status === 'active') {
-            $metrics = $tenant->run(function () {
-                return [
-                    'workers_count' => \App\Models\User::workers()->count(),
-                    'jobs_count' => \App\Models\JobOrder::count(),
-                    'tasks_count' => \App\Models\Task::count(),
-                    'payroll_periods_count' => \App\Models\PayrollPeriod::count(),
-                    'total_payroll_value' => \App\Models\PayrollPeriod::sum('total_amount'),
-                ];
-            });
-        }
+        $metrics = $tenant->run(function () {
+            return [
+                'workers_count' => User::workers()->count(),
+                'jobs_count' => JobOrder::count(),
+                'tasks_count' => Task::count(),
+                'payroll_periods_count' => PayrollPeriod::count(),
+                'total_payroll_value' => PayrollPeriod::sum('total_amount'),
+            ];
+        });
 
         return view('admin.tenants.show', compact('tenant', 'metrics'));
-    }
-
-    public function approve(Tenant $tenant)
-    {
-        try {
-            $this->onboardingService->approveTenant($tenant);
-        } catch (Throwable $e) {
-            return back()->withErrors([
-                'approval' => "Failed to approve tenant '{$tenant->company_name}'. Please try again. Error: {$e->getMessage()}",
-            ]);
-        }
-
-        // Log the action
-        $this->activityService->log(
-            'tenant.approved',
-            "Approved workspace for '{$tenant->company_name}'",
-            $tenant->id
-        );
-
-        // Send Notification to the stored admin email
-        Notification::route('mail', $tenant->admin_email)
-            ->notify(new TenantApprovedNotification($tenant));
-
-        return back()->with('success', "Tenant '{$tenant->company_name}' has been approved and notified.");
-    }
-
-    public function suspend(Tenant $tenant)
-    {
-        $tenant->update(['status' => 'suspended']);
-
-        // Log the action
-        $this->activityService->log(
-            'tenant.suspended',
-            "Suspended workspace for '{$tenant->company_name}'",
-            $tenant->id
-        );
-
-        return back()->with('success', "Tenant '{$tenant->company_name}' has been suspended.");
     }
 
     public function update(Request $request, Tenant $tenant)
@@ -115,7 +73,7 @@ class TenantManagementController extends Controller
     {
         // Get the first admin user from the tenant database
         $adminUser = $tenant->run(function () {
-            return \App\Models\User::where('role', 'admin')->first();
+            return User::where('role', 'admin')->first();
         });
 
         if (! $adminUser) {
@@ -137,8 +95,8 @@ class TenantManagementController extends Controller
         $baseDomain = preg_replace('/:\\d+$/', '', (string) (config('tenancy.central_domains')[0] ?? 'localhost'));
         $subdomain = $tenant->subdomain ?: $tenant->getTenantKey();
         $port = request()->getPort();
-        $portSegment = in_array((int) $port, [80, 443], true) ? '' : ':' . $port;
+        $portSegment = in_array((int) $port, [80, 443], true) ? '' : ':'.$port;
 
-        return redirect()->away($scheme . $subdomain . '.' . $baseDomain . $portSegment . '/impersonate/' . $token->token);
+        return redirect()->away($scheme.$subdomain.'.'.$baseDomain.$portSegment.'/impersonate/'.$token->token);
     }
 }

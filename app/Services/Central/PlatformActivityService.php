@@ -13,12 +13,12 @@ class PlatformActivityService
     public function log(string $event, string $description, ?string $tenantId = null, array $properties = []): void
     {
         ActivityLog::create([
-            'user_id'     => auth()->check() ? auth()->id() : null,
-            'tenant_id'   => $tenantId,
-            'event'       => $event,
+            'user_id' => auth()->check() ? auth()->id() : null,
+            'tenant_id' => $tenantId,
+            'event' => $event,
             'description' => $description,
-            'properties'  => $properties,
-            'ip_address'  => Request::ip(),
+            'properties' => $properties,
+            'ip_address' => Request::ip(),
         ]);
     }
 }

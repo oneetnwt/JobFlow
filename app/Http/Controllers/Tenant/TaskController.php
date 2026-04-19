@@ -32,12 +32,12 @@ class TaskController extends Controller
         if ($task->status === 'completed') {
             $task->update([
                 'status' => 'pending',
-                'completed_at' => null
+                'completed_at' => null,
             ]);
         } else {
             $task->update([
                 'status' => 'completed',
-                'completed_at' => now()
+                'completed_at' => now(),
             ]);
         }
 
@@ -56,6 +56,7 @@ class TaskController extends Controller
     public function destroy(Task $task): RedirectResponse
     {
         $task->delete();
+
         return back()->with('success', 'Task removed.');
     }
 }

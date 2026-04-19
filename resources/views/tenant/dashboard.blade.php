@@ -62,24 +62,26 @@
                         </thead>
                         <tbody>
                             @forelse($recent_jobs as $job)
-                                <tr>    
-                                    <td>        
+                                <tr>
+                                    <td>
                                         <div class="text-sm font-bold text-foreground">{{ $job->title }}</div>
-                                        <div class="text-[10px] text-muted uppercase tracking-tight mt-1">Order #{{ str_pad((string)$job->id, 5, '0', STR_PAD_LEFT) }}</div>
+                                        <div class="text-[10px] text-muted uppercase tracking-tight mt-1">Order
+                                            #{{ str_pad((string) $job->id, 5, '0', STR_PAD_LEFT) }}</div>
                                     </td>
-                                    <td>        
+                                    <td>
                                         <span class="badge 
-                                            {{ $job->status === 'completed' ? 'badge-success' : 'badge-primary' }}">
+                                                {{ $job->status === 'completed' ? 'badge-success' : 'badge-primary' }}">
                                             {{ strtoupper(str_replace('_', ' ', $job->status)) }}
                                         </span>
                                     </td>
                                     <td class="text-xs text-muted">
-                                        {{ $job->assignee?->name ?? 'Unassigned' }} 
+                                        {{ $job->assignee?->name ?? 'Unassigned' }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-5 py-12 text-center text-muted text-sm">No recent jobs found.</td>
+                                    <td colspan="3" class="px-5 py-12 text-center text-muted text-sm">No recent jobs found.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -90,17 +92,22 @@
             <!-- Sidebar / Mini stats -->
             <div class="space-y-6">
                 <!-- Removed Quick Actions from here since they were moved to Header -->
-                
+
                 <div class="card p-6">
                     <h3 class="text-xs font-bold text-foreground uppercase tracking-widest mb-4">Worker Roles</h3>
                     <div class="space-y-4">
                         @php
-                            $roles = App\Models\User::workers()->select('role', \DB::raw('count(*) as total'))->groupBy('role')->get();
+                            $roles = \App\Models\Role::withCount([
+                                'users' => function ($query) {
+                                    // optional: filter for just workers if needed, but users works
+                                }
+                            ])->get();
                         @endphp
                         @forelse($roles as $role)
-                            <div class="flex justify-between items-center bg-surface-alt p-3 rounded-lg border border-border">
-                                <span class="text-xs font-medium text-foreground capitalize">{{ $role->role }}s</span>
-                                <span class="badge badge-outline">{{ $role->total }}</span>
+                            <div
+                                class="flex justify-between items-center bg-surface-alt p-3 rounded-lg border border-border">
+                                <span class="text-xs font-medium text-foreground capitalize">{{ $role->name }}s</span>
+                                <span class="badge badge-outline">{{ $role->users_count }}</span>
                             </div>
                         @empty
                             <div class="text-center text-muted text-xs">No roles found</div>

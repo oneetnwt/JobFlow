@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Central\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Tenant;
 use Illuminate\View\View;
-
-use App\Models\ActivityLog;
 
 class AdminDashboardController extends Controller
 {
@@ -14,9 +13,6 @@ class AdminDashboardController extends Controller
     {
         $stats = [
             'total_tenants' => Tenant::count(),
-            'pending_approvals' => Tenant::where('status', 'pending')->count(),
-            'active_tenants' => Tenant::where('status', 'active')->count(),
-            'suspended_tenants' => Tenant::where('status', 'suspended')->count(),
         ];
 
         $recent_tenants = Tenant::latest()->take(5)->get();

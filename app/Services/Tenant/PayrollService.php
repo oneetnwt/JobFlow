@@ -88,36 +88,36 @@ class PayrollService
      */
     protected function generateLegacyPayrolls(PayrollPeriod $period): float
     {
-            $workers = User::workers()->with('profile')->get();
-            $totalAmount = 0;
+        $workers = User::workers()->with('profile')->get();
+        $totalAmount = 0;
 
-            foreach ($workers as $worker) {
-                $baseRate = $worker->profile?->hourly_rate ?? 0;
-                
-                // For this MVP, we assume a standard 40hr/week or 80hr/bi-weekly
-                // In a real app, we would sum hours from a 'timesheets' table
-                $hoursWorked = 40.00; 
-                $gross = $baseRate * $hoursWorked;
-                $net = $gross; // Subtract taxes/deductions here if needed
+        foreach ($workers as $worker) {
+            $baseRate = $worker->profile?->hourly_rate ?? 0;
 
-                $payroll = Payroll::updateOrCreate(
-                    [
-                        'payroll_period_id' => $period->id,
-                        'user_id' => $worker->id,
-                    ],
-                    [
-                        'base_rate' => $baseRate,
-                        'hours_worked' => $hoursWorked,
-                        'gross_amount' => $gross,
-                        'net_amount' => $net,
-                        'status' => 'pending',
-                    ]
-                );
+            // For this MVP, we assume a standard 40hr/week or 80hr/bi-weekly
+            // In a real app, we would sum hours from a 'timesheets' table
+            $hoursWorked = 40.00;
+            $gross = $baseRate * $hoursWorked;
+            $net = $gross; // Subtract taxes/deductions here if needed
 
-                $totalAmount += $net;
-            }
+            $payroll = Payroll::updateOrCreate(
+                [
+                    'payroll_period_id' => $period->id,
+                    'user_id' => $worker->id,
+                ],
+                [
+                    'base_rate' => $baseRate,
+                    'hours_worked' => $hoursWorked,
+                    'gross_amount' => $gross,
+                    'net_amount' => $net,
+                    'status' => 'pending',
+                ]
+            );
 
-            return $totalAmount;
+            $totalAmount += $net;
+        }
+
+        return $totalAmount;
     }
 
     /**

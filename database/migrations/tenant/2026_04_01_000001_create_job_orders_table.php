@@ -15,19 +15,19 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            
+
             // Statuses: draft, open, assigned, in_progress, completed, cancelled
             $table->string('status')->default('open');
-            
+
             // Priorities: low, medium, high, urgent
             $table->string('priority')->default('medium');
-            
+
             $table->timestamp('deadline_at')->nullable();
             $table->timestamp('completed_at')->nullable();
-            
+
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('assigned_to')->nullable()->constrained('users');
-            
+
             $table->timestamps();
             $table->softDeletes();
         });

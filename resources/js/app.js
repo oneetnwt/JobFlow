@@ -38,6 +38,7 @@ function ensureConfirmDialog() {
 			padding: 0;
 			background: transparent;
 			max-width: 92vw;
+                        overflow: visible;
 		}
 		dialog.app-confirm-dialog::backdrop {
 			background: rgba(0, 0, 0, 0.68);

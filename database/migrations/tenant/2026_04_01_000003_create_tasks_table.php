@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('job_order_id')->constrained()->onDelete('cascade');
-            
+
             $table->string('title');
             $table->text('description')->nullable();
-            
+
             // Status: pending, in_progress, completed
             $table->string('status')->default('pending');
-            
+
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });

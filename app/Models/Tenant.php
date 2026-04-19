@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
+use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
 class Tenant extends BaseTenant implements TenantWithDatabase
 {
@@ -23,18 +23,12 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'admin_email',
             'plan_id',
             'billing_cycle',
-            'status',
             'brand_color',
             'logo_url',
+            'current_version',
+            'last_updated_at',
+            'update_dismissed_at',
         ];
-    }
-
-    /**
-     * Check if the tenant is active.
-     */
-    public function isActive(): bool
-    {
-        return $this->status === 'active';
     }
 
     /**
@@ -51,5 +45,13 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function tenantPlan()
     {
         return $this->hasOne(TenantPlan::class)->latestOfMany('valid_until');
+    }
+
+    /**
+     * Get the new option C subscription for the tenant.
+     */
+    public function subscription()
+    {
+        return $this->hasOne(TenantSubscription::class)->latestOfMany();
     }
 }

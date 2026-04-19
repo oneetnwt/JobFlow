@@ -12,8 +12,7 @@ use Illuminate\View\View;
 
 class PayrollController extends Controller
 {
-    public function __construct(protected PayrollService $payrollService)
-    {}
+    public function __construct(protected PayrollService $payrollService) {}
 
     /**
      * Display a listing of payroll periods.
@@ -21,6 +20,7 @@ class PayrollController extends Controller
     public function index(): View
     {
         $periods = PayrollPeriod::latest()->paginate(10);
+
         return view('tenant.payroll.index', compact('periods'));
     }
 
@@ -60,6 +60,7 @@ class PayrollController extends Controller
     public function show(PayrollPeriod $period): View
     {
         $period->load('payrolls.user');
+
         return view('tenant.payroll.show', compact('period'));
     }
 

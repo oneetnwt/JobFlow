@@ -41,15 +41,17 @@ class RegisterTenantRequest extends FormRequest
         // Allow users to paste either "acme" or "acme.localhost".
         $subdomain = Str::of($subdomainInput)
             ->when(
-                Str::endsWith($subdomainInput, '.'.$centralDomain),
-                fn ($value) => $value->beforeLast('.'.$centralDomain)
+                Str::endsWith($subdomainInput, '.' . $centralDomain),
+                fn($value) => $value->beforeLast('.' . $centralDomain)
             )
             ->trim('.')
             ->toString();
 
         $this->merge([
             'subdomain' => $subdomain,
-            'domain' => $subdomain.'.'.$centralDomain,
+            'domain' => $subdomain . '.' . $centralDomain,
+            'password' => $this->password ? trim($this->password) : null,
+            'password_confirmation' => $this->password_confirmation ? trim($this->password_confirmation) : null,
         ]);
     }
 }

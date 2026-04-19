@@ -49,7 +49,7 @@ return new class extends Migration
                     ->where('id', $tenant->id)
                     ->update([
                         'subdomain' => $subdomain,
-                        'db_name' => $existing?->db_name ?: 'jobflow_' . $tenant->id,
+                        'db_name' => $existing?->db_name ?: 'jobflow_'.$tenant->id,
                         'db_host' => $existing?->db_host ?: '127.0.0.1',
                     ]);
             }

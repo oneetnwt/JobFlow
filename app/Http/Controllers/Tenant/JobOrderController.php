@@ -29,6 +29,7 @@ class JobOrderController extends Controller
     public function create(): View
     {
         $workers = User::where('role', '!=', 'admin')->get();
+
         return view('tenant.jobs.create', compact('workers'));
     }
 
@@ -41,7 +42,7 @@ class JobOrderController extends Controller
         $validated['created_by'] = auth()->id();
 
         // If a worker is assigned, status becomes 'assigned'
-        if (!empty($validated['assigned_to'])) {
+        if (! empty($validated['assigned_to'])) {
             $validated['status'] = 'assigned';
         }
 
@@ -57,6 +58,7 @@ class JobOrderController extends Controller
     public function show(JobOrder $job): View
     {
         $job->load(['creator', 'assignee']);
+
         return view('tenant.jobs.show', compact('job'));
     }
 
@@ -66,6 +68,7 @@ class JobOrderController extends Controller
     public function edit(JobOrder $job): View
     {
         $workers = User::where('role', '!=', 'admin')->get();
+
         return view('tenant.jobs.edit', compact('job', 'workers'));
     }
 
@@ -82,6 +85,13 @@ class JobOrderController extends Controller
         }
 
         // Business logic: if status is completed, set completed_at
+        // Ensure all required subtasks are completed before status shift to completed
+        if (isset($validated['status']) && $validated['status'] === 'completed' && $job->status !== 'completed') {
+            $uncompletedRequiredCount = $job->subtasks()->where('is_required', true)->whereDoesntHave('completion')->count();
+            if ($uncompletedRequiredCount > 0) {
+                return back()->withErrors(['status' => 'Cannot complete this Job Order until all required subtasks are fulfilled.'])->withInput();
+            }
+        }
         if (isset($validated['status']) && $validated['status'] === 'completed' && $job->status !== 'completed') {
             $validated['completed_at'] = now();
         }

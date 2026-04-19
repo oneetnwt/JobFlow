@@ -12,21 +12,6 @@
                 <p class="text-[10px] font-bold text-muted uppercase tracking-widest">Total Tenants</p>
                 <p class="mt-2 text-3xl font-extrabold text-foreground">{{ $stats['total_tenants'] }}</p>
             </div>
-
-            <div class="card p-6 border-t-4 border-t-warning relative">       
-                <p class="text-[10px] font-bold text-muted uppercase tracking-widest">Pending Approvals</p>
-                <p class="mt-2 text-3xl font-extrabold text-warning">{{ $stats['pending_approvals'] }}</p>
-            </div>
-
-            <div class="card p-6 border-t-4 border-t-success relative">   
-                <p class="text-[10px] font-bold text-muted uppercase tracking-widest">Active Workspaces</p>
-                <p class="mt-2 text-3xl font-extrabold text-success">{{ $stats['active_tenants'] }}</p>
-            </div>
-
-            <div class="card p-6 border-t-4 border-t-danger relative">
-                <p class="text-[10px] font-bold text-muted uppercase tracking-widest">Suspended</p>
-                <p class="mt-2 text-3xl font-extrabold text-danger">{{ $stats['suspended_tenants'] }}</p>
-            </div>
         </div>
 
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -34,7 +19,8 @@
             <div class="lg:col-span-2 card overflow-hidden">
                 <div class="px-6 py-4 border-b border-border bg-surface-alt flex justify-between items-center">
                     <h3 class="text-xs font-bold text-foreground uppercase tracking-widest">Recent Registrations</h3>
-                    <a href="{{ route('admin.tenants.index') }}" class="btn btn-outline text-xs px-2 py-1">Manage All</a>
+                    <a href="{{ route('admin.tenants.index') }}" class="btn btn-outline text-xs px-2 py-1">Manage
+                        All</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="data-table">
@@ -47,27 +33,29 @@
                         </thead>
                         <tbody>
                             @forelse($recent_tenants as $tenant)
-                                <tr>    
-                                    <td>        
+                                <tr>
+                                    <td>
                                         <div class="text-sm font-bold text-foreground">{{ $tenant->company_name }}</div>
-                                        <div class="text-[10px] text-muted uppercase font-medium mt-1">{{ $tenant->id }}.localhost:8000</div>
+                                        <div class="text-[10px] text-muted uppercase font-medium mt-1">
+                                            {{ $tenant->id }}.localhost:8000</div>
                                     </td>
-                                    <td>        
+                                    <td>
                                         <span class="badge 
-                                            {{ $tenant->status === 'active' ? 'badge-success' : '' }}
-                                            {{ $tenant->status === 'pending' ? 'badge-warning' : '' }}
-                                            {{ $tenant->status === 'suspended' ? 'badge-danger' : '' }}
-                                        ">
-                                            {{ strtoupper($tenant->status) }}       
+                                                {{ $tenant->status === 'active' ? 'badge-success' : '' }}
+                                                {{ $tenant->status === 'pending' ? 'badge-warning' : '' }}
+                                                {{ $tenant->status === 'suspended' ? 'badge-danger' : '' }}
+                                            ">
+                                            {{ strtoupper($tenant->status) }}
                                         </span>
                                     </td>
                                     <td class="text-xs text-muted font-medium">
-                                        {{ $tenant->created_at->diffForHumans() }}  
+                                        {{ $tenant->created_at->diffForHumans() }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-12 text-center text-muted text-sm italic">No tenants registered yet.</td>
+                                    <td colspan="3" class="px-6 py-12 text-center text-muted text-sm italic">No tenants
+                                        registered yet.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -77,7 +65,7 @@
 
             <!-- Activity Feed -->
             <div class="card overflow-hidden">
-                <div class="px-6 py-4 border-b border-border bg-surface-alt">    
+                <div class="px-6 py-4 border-b border-border bg-surface-alt">
                     <h3 class="text-xs font-bold text-foreground uppercase tracking-widest">Platform Activity</h3>
                 </div>
                 <div class="p-6">
@@ -90,12 +78,13 @@
                                 <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-surface">
                                     <div class="h-1.5 w-1.5 rounded-full bg-border ring-1 ring-border"></div>
                                 </div>
-                                <div class="flex-auto py-0.5 text-xs leading-5">    
+                                <div class="flex-auto py-0.5 text-xs leading-5">
                                     <p class="text-foreground">
                                         <strong class="font-bold">{{ $log->admin?->name ?? 'System' }}</strong>
                                         <span class="text-muted">{{ $log->description }}</span>
                                     </p>
-                                    <time datetime="{{ $log->created_at }}" class="flex-none text-muted text-[10px] font-bold uppercase block mt-1">{{ $log->created_at->diffForHumans() }}</time>
+                                    <time datetime="{{ $log->created_at }}"
+                                        class="flex-none text-muted text-[10px] font-bold uppercase block mt-1">{{ $log->created_at->diffForHumans() }}</time>
                                 </div>
                             </li>
                         @empty
