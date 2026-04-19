@@ -4,7 +4,6 @@
 
 ![Laravel 13](https://img.shields.io/badge/Laravel-13.x-FF2D20)
 ![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-777BB4)
-![License: MIT](https://img.shields.io/badge/License-MIT-green)
 ![Build](https://img.shields.io/badge/Build-No%20CI%20Configured-lightgrey)
 ![Last Commit](https://img.shields.io/github/last-commit/oneetnwt/JobFlow)
 
@@ -24,9 +23,7 @@
 12. [Pricing Plans](#12-pricing-plans)
 13. [Folder Structure](#13-folder-structure)
 14. [Key Routes](#14-key-routes)
-15. [Contributing](#15-contributing)
-16. [License](#16-license)
-17. [Contact and Support](#17-contact-and-support)
+15. [Academic Context](#15-academic-context)
 
 ## 3. Overview
 
@@ -529,47 +526,10 @@ jobflow-oms/
 | POST      | `/payroll/{period}/generate` | `tenant.payroll.generate` | Generate payroll slips (gated)     |
 | POST      | `/payroll/{period}/release`  | `tenant.payroll.release`  | Release payroll period (gated)     |
 
-## 15. Contributing
+## 15. Academic Context
 
-1. Fork the repository.
-2. Create a feature branch:
+This project was developed strictly for academic purposes as part of a university course or capstone requirement. The system demonstrates principles of software engineering, multi-tenant architecture, role-based access control, and database design.
 
-```bash
-git checkout -b feature/your-feature-name
-```
-
-3. Commit using conventional commit prefixes: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`.
-4. Push your branch and open a pull request against `main`.
-5. Ensure each pull request receives at least one review before merge.
-6. Include relevant tests for all new features and behavior changes.
-
-## 16. License
-
-MIT License
-
-Copyright (c) 2026 JobFlow OMS Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-## 17. Contact and Support
-
-- Maintainer: Repository Owner
-- Email: admin@jobflow.com
-- Issue Tracker: [GitHub Issues](https://github.com/oneetnwt/JobFlow/issues)
-- Documentation: [Project README](https://github.com/oneetnwt/JobFlow#readme)
+- **Developer:** Student / Developer (Repository Owner)
+- **Status:** Non-Commercial / Educational Use Only
+- **Notice:** This software is provided "as is" without warranty or ongoing maintenance. Pull requests and external open-source contributions are not actively monitored or accepted as this is a closed academic submission.
