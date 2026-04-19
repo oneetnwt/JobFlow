@@ -18,13 +18,13 @@ class CheckTenantUpdate
     {
         $tenant = tenant();
 
-        if ($tenant) {
+        if ($tenant && auth()->check() && auth()->user()->hasRole('admin')) {
             $cacheKey = "tenant_{$tenant->id}_pending_update";
 
             $pendingUpdate = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($tenant) {
                 $query = AppVersion::query()->orderBy('released_at', 'desc');
 
-                if (! config('updates.include_prereleases', false)) {
+                if (!config('updates.include_prereleases', false)) {
                     $query->production();
                 }
 

@@ -112,10 +112,10 @@
                                 <div class="mb-5">
                                     <h3 class="text-lg font-extrabold text-foreground">{{ $plan->name }}</h3>
                                     <div class="mt-3 flex items-baseline text-foreground">
-                                        <span class="text-3xl font-black tracking-tight">₱{{ number_format($plan->price, 2) }}</span>
+                                        <span class="text-3xl font-black tracking-tight">₱{{ number_format($plan->monthly_price, 2) }}</span>
                                         <span class="ml-1 text-sm font-semibold text-muted">/mo</span>
                                     </div>
-                                    <p class="mt-3 text-sm text-muted line-clamp-2 min-h-[40px]">{{ $plan->description }}</p>
+                                    <p class="mt-3 text-sm text-muted line-clamp-2 min-h-[40px]">{{ $plan->tagline }}</p>
                                 </div>
 
                                 <ul class="mt-2 mb-6 space-y-3 flex-1">
@@ -140,7 +140,7 @@
                                             Current Active Plan
                                         </button>
                                     @else
-                                        <form action="{{ route('tenant.billing.checkout') }}" method="POST">
+                                        <form action="{{ route('tenant.billing.checkout', ['plan' => $plan->slug ?? $plan->id ]) }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="plan_id" value="{{ $plan->id }}">
                                             <button type="submit" class="w-full btn {{ $isCurrentPlan ? 'btn-primary' : 'btn-outline' }}">

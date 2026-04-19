@@ -11,7 +11,7 @@
         <h4 class="text-xs font-bold text-[#0F1B2D] uppercase tracking-wider">
             Checklist 
             @if($totalCount > 0)
-                <span class="text-[10px] bg-[#2D7DD2] text-white px-2 py-0.5 rounded-full ml-2" x-text="`${completedCount} / ${totalCount}`">{{ $completedCount }} / {{ $totalCount }}</span>
+                <span class="text-[10px] bg-[var(--color-accent)] text-white px-2 py-0.5 rounded-full ml-2" x-text="`${completedCount} / ${totalCount}`">{{ $completedCount }} / {{ $totalCount }}</span>
             @endif
         </h4>
         @if($canManage && !in_array($job->status, ['completed', 'archived']))
@@ -32,14 +32,14 @@
                                 Save as Template
                             </button>
                         @endif
-                        <a href="{{ route('tenant.subtask-templates.index') }}" class="block w-full text-left px-4 py-2 text-xs text-[#2D7DD2] font-bold hover:bg-slate-50 transition-colors border-t border-slate-100">
+                        <a href="{{ route('tenant.subtask-templates.index') }}" class="block w-full text-left px-4 py-2 text-xs text-[var(--color-accent)] font-bold hover:bg-slate-50 transition-colors border-t border-slate-100">
                             Manage Templates &rarr;
                         </a>
                     </div>
                 </div>
 
                 <button @click="openModal = true; isEditing = false; currentSubtask = {}" 
-                    class="text-[#2D7DD2] hover:text-[#1E3A5F] text-xs font-bold flex items-center gap-1 transition-colors">
+                    class="text-[var(--color-accent)] hover:text-[#1E3A5F] text-xs font-bold flex items-center gap-1 transition-colors">
                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -76,7 +76,7 @@
                         @click="toggleSubtask({{ $subtask->id }}, {{ $isChecked ? 'true' : 'false' }})"
                         @if(!$canCheck || in_array($job->status, ['completed', 'archived'])) disabled @endif
                         class="h-5 w-5 rounded border flex items-center justify-center transition-colors
-                            {{ $isChecked ? 'bg-[#2D7DD2] border-[#2D7DD2]' : 'bg-white border-slate-300 hover:border-[#2D7DD2]' }}
+                            {{ $isChecked ? 'bg-[var(--color-accent)] border-[#2D7DD2]' : 'bg-white border-slate-300 hover:border-[#2D7DD2]' }}
                             {{ !$canCheck || in_array($job->status, ['completed', 'archived']) ? 'opacity-50 cursor-not-allowed' : '' }}">
                         @if($isChecked)
                             <svg class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -108,7 +108,7 @@
 
                 @if($canManage && !in_array($job->status, ['completed', 'archived']))
                     <div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
-                        <button type="button" @click="editSubtask({{ $subtask->toJson() }})" class="text-slate-400 hover:text-[#2D7DD2]">
+                        <button type="button" @click="editSubtask({{ $subtask->toJson() }})" class="text-slate-400 hover:text-[var(--color-accent)]">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                         </button>
                         <form action="{{ route('tenant.subtasks.destroy', [$job, $subtask]) }}" method="POST" class="inline">
@@ -138,7 +138,7 @@
         <div x-show="openModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div x-show="openModal" class="fixed inset-0 transition-opacity" @click="openModal = false">
-                    <div class="absolute inset-0 bg-slate-900 opacity-75"></div>
+                    <div class="absolute inset-0 bg-black opacity-75"></div>
                 </div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
                 <div x-show="openModal" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
@@ -152,14 +152,14 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700">Title <span class="text-red-500">*</span></label>
-                                    <input type="text" name="title" x-model="currentSubtask.title" required class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-[#2D7DD2] focus:border-[#2D7DD2] sm:text-sm">
+                                    <input type="text" name="title" x-model="currentSubtask.title" required class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)] sm:text-sm">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700">Description (Optional)</label>
-                                    <textarea name="description" x-model="currentSubtask.description" rows="2" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-[#2D7DD2] focus:border-[#2D7DD2] sm:text-sm text-slate-600"></textarea>
+                                    <textarea name="description" x-model="currentSubtask.description" rows="2" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)] sm:text-sm text-slate-600"></textarea>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="checkbox" name="is_required" id="is_required" value="1" x-model="currentSubtask.is_required" class="h-4 w-4 text-[#2D7DD2] focus:ring-[#2D7DD2] border-slate-300 rounded">
+                                    <input type="checkbox" name="is_required" id="is_required" value="1" x-model="currentSubtask.is_required" class="h-4 w-4 text-[var(--color-accent)] focus:ring-[var(--color-accent)] border-slate-300 rounded">
                                     <label for="is_required" class="ml-2 block text-sm text-slate-700 font-medium">
                                         Required for completion
                                     </label>
@@ -167,7 +167,7 @@
                             </div>
                         </div>
                         <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-100">
-                            <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#0F1B2D] text-base font-medium text-white hover:bg-[#1E3A5F] focus:outline-none sm:ml-3 sm:w-auto sm:text-sm font-bold transition-colors">
+                            <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[var(--color-accent)] text-base font-medium text-white hover:bg-[var(--color-accent-mid)] focus:outline-none sm:ml-3 sm:w-auto sm:text-sm font-bold transition-colors">
                                 Save
                             </button>
                             <button type="button" @click="openModal = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
@@ -184,11 +184,11 @@
         <div x-show="openSaveModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div x-show="openSaveModal" class="fixed inset-0 transition-opacity" @click="openSaveModal = false">
-                    <div class="absolute inset-0 bg-slate-900 opacity-75"></div>
+                    <div class="absolute inset-0 bg-black opacity-75"></div>
                 </div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
                 <div x-show="openSaveModal" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-                    <form action="{{ route('tenant.subtask-templates.save-from-job', $job) }}" method="POST">
+                    <form action="{{ route('tenant.subtasks.save-template', $job) }}" method="POST">
                         @csrf
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <h3 class="text-lg leading-6 font-bold text-[#0F1B2D] mb-4">Save Checklist as Template</h3>
@@ -196,11 +196,11 @@
                             
                             <div>
                                 <label class="block text-sm font-medium text-slate-700">Template Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="name" required placeholder="e.g. Standard Website Setup" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-[#2D7DD2] focus:border-[#2D7DD2] sm:text-sm">
+                                <input type="text" name="name" required placeholder="e.g. Standard Website Setup" class="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)] sm:text-sm">
                             </div>
                         </div>
                         <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-100">
-                            <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#2D7DD2] text-base font-medium text-white hover:bg-[#1E3A5F] focus:outline-none sm:ml-3 sm:w-auto sm:text-sm font-bold transition-colors">
+                            <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[var(--color-accent)] text-base font-medium text-white hover:bg-[var(--color-accent-mid)] focus:outline-none sm:ml-3 sm:w-auto sm:text-sm font-bold transition-colors">
                                 Save Template
                             </button>
                             <button type="button" @click="openSaveModal = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
@@ -217,11 +217,11 @@
         <div x-show="openLoadModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div x-show="openLoadModal" class="fixed inset-0 transition-opacity" @click="openLoadModal = false">
-                    <div class="absolute inset-0 bg-slate-900 opacity-75"></div>
+                    <div class="absolute inset-0 bg-black opacity-75"></div>
                 </div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
                 <div x-show="openLoadModal" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-                    <form action="{{ route('tenant.subtask-templates.load-into-job', $job) }}" method="POST">
+                    <form action="{{ route('tenant.subtasks.load-template', $job) }}" method="POST">
                         @csrf
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <h3 class="text-lg leading-6 font-bold text-[#0F1B2D] mb-4">Load Template</h3>
@@ -233,7 +233,7 @@
                                     $availableTemplates = \App\Models\SubtaskTemplate::all();
                                 @endphp
                                 @if($availableTemplates->count() > 0)
-                                    <select name="template_id" required class="mt-1 block w-full pl-3 pr-10 py-2 border-slate-300 text-base focus:outline-none focus:ring-[#2D7DD2] focus:border-[#2D7DD2] sm:text-sm rounded-md">
+                                    <select name="template_id" required class="mt-1 block w-full pl-3 pr-10 py-2 border-slate-300 text-base focus:outline-none focus:ring-[var(--color-accent)] focus:border-[var(--color-accent)] sm:text-sm rounded-md">
                                         <option value="" disabled selected>Choose a template...</option>
                                         @foreach($availableTemplates as $template)
                                             <option value="{{ $template->id }}">{{ $template->name }} ({{ $template->items()->count() }} items)</option>
@@ -246,7 +246,7 @@
                                 @endif
                                 <div class="mt-3 flex items-start">
                                     <div class="flex items-center h-5">
-                                        <input id="replace" name="replace" type="checkbox" value="1" class="focus:ring-[#2D7DD2] h-4 w-4 text-[#2D7DD2] border-slate-300 rounded">
+                                        <input id="replace" name="replace" type="checkbox" value="1" class="focus:ring-[var(--color-accent)] h-4 w-4 text-[var(--color-accent)] border-slate-300 rounded">
                                     </div>
                                     <div class="ml-2 text-sm">
                                         <label for="replace" class="font-medium text-slate-700">Clear existing checklist</label>
@@ -256,7 +256,7 @@
                             </div>
                         </div>
                         <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-100">
-                            <button type="submit" @if($availableTemplates->isEmpty()) disabled @endif class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#2D7DD2] text-base font-medium text-white hover:bg-[#1E3A5F] focus:outline-none sm:ml-3 sm:w-auto sm:text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button type="submit" @if($availableTemplates->isEmpty()) disabled @endif class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[var(--color-accent)] text-base font-medium text-white hover:bg-[var(--color-accent-mid)] focus:outline-none sm:ml-3 sm:w-auto sm:text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                 Load Items
                             </button>
                             <button type="button" @click="openLoadModal = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">

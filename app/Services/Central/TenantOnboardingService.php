@@ -107,19 +107,21 @@ class TenantOnboardingService
             tenancy()->initialize($tenant);
             $tenancyInitialized = true;
 
+            // Seed the essential tenant roles and permissions
+            \Illuminate\Support\Facades\Artisan::call('db:seed', [
+                '--class' => 'Database\\Seeders\\TenantRBACSeeder',
+                '--force' => true
+            ]);
+
             $tenantAdmin = User::updateOrCreate(
                 ['email' => $tenantAdminCredentials->email],
                 [
                     'name' => $tenant->admin_name,
                     'password' => $tenantAdminCredentials->password_hash,
+                    'email_verified_at' => now(), // Auto-verified since OTP was used during registration
                 ]
             );
             $tenantAdmin->assignRole('admin');
-
-            // Directly send the email verification notification within the tenant context
-            // instead of relying on the Registered event listener which might not be mapped
-            // or might be incorrectly queued outside the tenant context
-            $tenantAdmin->sendEmailVerificationNotification();
 
             tenancy()->end();
             $tenancyInitialized = false;

@@ -68,7 +68,7 @@
                     <a href="{{ route('tenant.jobs.index') }}"
                         class="text-sm font-medium text-slate-600 hover:text-slate-800">Cancel</a>
                     <button type="submit"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#0F1B2D] hover:bg-[#1E3A5F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2D7DD2] transition-colors">
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[var(--color-accent)] hover:bg-[var(--color-accent-mid)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-accent)] transition-colors">
                         Create Job Order
                     </button>
                 </div>

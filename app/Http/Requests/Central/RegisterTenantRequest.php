@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Central;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
@@ -22,6 +23,15 @@ class RegisterTenantRequest extends FormRequest
             'admin_name' => ['required', 'string', 'max:255'],
             'admin_email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'verification_code' => [
+                'required',
+                'string',
+                function ($attr, $val, $fail) {
+                    if (Cache::store('file')->get('register_otp_' . request('admin_email')) !== $val) {
+                        $fail('Invalid or expired verification code.');
+                    }
+                }
+            ],
             // Legacy fields are optional to avoid breaking existing links or old clients.
             'plan_id' => ['nullable', 'exists:plans,id'],
             'billing_cycle' => ['nullable', 'string', 'in:monthly,annual'],

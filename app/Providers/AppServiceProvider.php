@@ -67,17 +67,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Register Gates per Permission dynamically
-        try {
-            $rbac = app(RBACService::class);
-            if (Schema::hasTable('permissions')) {
-                foreach ($rbac->getPermissions() as $permission) {
-                    Gate::define($permission->slug, function (User $user) use ($permission) {
-                        return $user->hasPermissionTo($permission->slug);
-                    });
-                }
+        Gate::before(function ($user, $ability) {
+            if (method_exists($user, 'hasPermission') && $user->hasPermission($ability)) {
+                return true;
             }
-        } catch (\Exception $e) {
-            // Ignore for initial setup or situations where DB isn't available yet
-        }
+            return null;
+        });
     }
 }

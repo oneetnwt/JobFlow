@@ -45,7 +45,7 @@
     @php
         $tenantSub = tenant()->subscription;
     @endphp
-    @if($tenantSub && $tenantSub->status === 'trialing' && $tenantSub->trial_ends_at)
+    @if(auth()->check() && auth()->user()->hasRole('admin') && $tenantSub && $tenantSub->status === 'trialing' && $tenantSub->trial_ends_at)
         @php
             $daysLeft = (int) ceil(now()->diffInDays($tenantSub->trial_ends_at, false));
             $bannerColor = $daysLeft > 7 ? 'bg-emerald-600' : ($daysLeft > 3 ? 'bg-amber-600' : 'bg-rose-600');

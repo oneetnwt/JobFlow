@@ -79,9 +79,11 @@ Route::middleware([
             });
 
             // System Updates
-            Route::get('/updates', [TenantUpdateController::class, 'index'])->name('tenant.updates.index');
-            Route::post('/updates/{version}/apply', [TenantUpdateController::class, 'apply'])->name('tenant.updates.apply');
-            Route::post('/updates/dismiss', [TenantUpdateController::class, 'dismiss'])->name('tenant.updates.dismiss');
+            Route::middleware('role:admin')->group(function () {
+                Route::get('/updates', [TenantUpdateController::class, 'index'])->name('tenant.updates.index');
+                Route::post('/updates/{version}/apply', [TenantUpdateController::class, 'apply'])->name('tenant.updates.apply');
+                Route::post('/updates/dismiss', [TenantUpdateController::class, 'dismiss'])->name('tenant.updates.dismiss');
+            });
 
             // Roles Management
             // Tenant Settings

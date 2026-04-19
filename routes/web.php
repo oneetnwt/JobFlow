@@ -11,10 +11,10 @@ use App\Http\Controllers\Central\Admin\PricingPlanController;
 // Loop over your configured central domains (from config/tenancy.php)
 foreach (config('tenancy.central_domains') as $domain) {
     Route::domain($domain)->middleware('web')->group(function () use ($domain) {
-        
+
         // 1. Super Admin Portal (Restricted to admin.* subdomains)
         if (str_starts_with($domain, 'admin.')) {
-            
+
             // Define plain 'login' route for Laravel's auth middleware to redirect to
             Route::get('/login', [AdminAuthController::class, 'create'])->name('login')->middleware('guest:central');
 
@@ -28,7 +28,7 @@ foreach (config('tenancy.central_domains') as $domain) {
                     Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
                     // Dashboard is now mapped to the root "/"
                     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-                    
+
                     // Tenant Management
                     Route::get('/tenants', [TenantManagementController::class, 'index'])->name('tenants.index');
                     Route::get('/tenants/{tenant}', [TenantManagementController::class, 'show'])->name('tenants.show');
@@ -56,6 +56,7 @@ foreach (config('tenancy.central_domains') as $domain) {
 
             // Registration Flow
             Route::get('/register', [RegisterTenantController::class, 'create'])->name('tenant.register.create');
+            Route::post('/register/send-code', [RegisterTenantController::class, 'sendCode'])->name('tenant.register.send-code');
             Route::post('/register', [RegisterTenantController::class, 'store'])->name('tenant.register.store');
         }
 

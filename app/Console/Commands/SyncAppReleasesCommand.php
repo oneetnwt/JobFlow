@@ -41,13 +41,13 @@ class SyncAppReleasesCommand extends Command
 
         $addedCounter = 0;
         $skippedCounter = 0;
-        $isFirstSync = ! AppVersion::exists();
+        $isFirstSync = !AppVersion::exists();
         $newVersions = [];
 
         // Reverse to process oldest first
         foreach (array_reverse($releases) as $release) {
             $tagName = $release['tag_name'] ?? null;
-            if (! $tagName) {
+            if (!$tagName) {
                 continue;
             }
 
@@ -76,7 +76,7 @@ class SyncAppReleasesCommand extends Command
 
         $this->info("Sync completed: {$addedCounter} added, {$skippedCounter} skipped.");
 
-        if (! $isFirstSync && count($newVersions) > 0) {
+        if (!$isFirstSync && count($newVersions) > 0) {
             $this->notifyTenantsAboutNewReleases(collect($newVersions)->last());
         }
 
@@ -87,10 +87,10 @@ class SyncAppReleasesCommand extends Command
     {
         $this->info('Notifying active tenants about newly available releases...');
 
-        $tenants = Tenant::where('status', 'active')->get();
+        $tenants = Tenant::whereNotNull('admin_email')->get();
 
         foreach ($tenants as $tenant) {
-            if (! empty($tenant->admin_email)) {
+            if (!empty($tenant->admin_email)) {
                 Notification::route('mail', $tenant->admin_email)
                     ->notify(new NewUpdateAvailableNotification($tenant, $latestVersion));
             }

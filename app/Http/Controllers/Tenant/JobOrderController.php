@@ -28,7 +28,7 @@ class JobOrderController extends Controller
      */
     public function create(): View
     {
-        $workers = User::where('role', '!=', 'admin')->get();
+        $workers = User::workers()->get();
 
         return view('tenant.jobs.create', compact('workers'));
     }
@@ -42,7 +42,7 @@ class JobOrderController extends Controller
         $validated['created_by'] = auth()->id();
 
         // If a worker is assigned, status becomes 'assigned'
-        if (! empty($validated['assigned_to'])) {
+        if (!empty($validated['assigned_to'])) {
             $validated['status'] = 'assigned';
         }
 
@@ -67,7 +67,7 @@ class JobOrderController extends Controller
      */
     public function edit(JobOrder $job): View
     {
-        $workers = User::where('role', '!=', 'admin')->get();
+        $workers = User::workers()->get();
 
         return view('tenant.jobs.edit', compact('job', 'workers'));
     }

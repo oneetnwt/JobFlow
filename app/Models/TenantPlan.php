@@ -10,6 +10,11 @@ class TenantPlan extends Model
 {
     use HasFactory;
 
+    public function getConnectionName()
+    {
+        return config('tenancy.database.central_connection');
+    }
+
     protected $fillable = [
         'tenant_id',
         'plan_name',
